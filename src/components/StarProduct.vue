@@ -2,7 +2,7 @@
   <div class="starproduct">
    <div class="best-product-logo">
    		<a href="##">
-   			<img src="./../../static/img/logo/promotion-banner-best-product-logo.jpg" height="42" width="356">
+   			<img src="./../../static/img/index/promotion-banner-best-product-logo.jpg" height="42" width="356">
    		</a>
    </div>
         <div class="wrap">

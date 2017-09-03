@@ -2,7 +2,7 @@
   <div class="navheader">
    	<div class="logo">
    		<a href="##">
-   			<img src="./../../static/img/logo.png" height="55" width="250">	
+   			<img src="./../../static/img/base/logo.png" height="55" width="250">	
    		</a>
    	</div>
 
@@ -36,7 +36,7 @@
    			</li>
    			<li>
    				<span class="shoppingbag">
-   					<img src="./../../static/img/shoppingBag.jpg" height="14" width="13">
+   					<img src="./../../static/img/index/shopping-bag.jpg" height="14" width="13">
    				</span>
    				<a href="">
    					我的购物袋 （ {{ shoppingBag }} ）
