@@ -1,0 +1,55 @@
+//公共样式库
+//清除select的样式
+
+
+//清除浮动
+.clearfix:after {    
+  content:".";        
+  display:block;     
+  height:0;    
+  visibility:hidden;     
+  clear:both; 
+}
+
+.clearfix { 
+  *zoom:1;
+}
+
+ul {
+  margin: 0;
+  padding: 0; 
+}
+
+li{
+  list-style: none;
+}
+
+h3 {
+   margin: 0;
+  padding: 0; 
+}
+
+
+//按钮基本样式
+.normal-btn {
+  background-color: red;
+  border: none;
+  width: 93px;
+  height: 24px;
+  line-height: 12px;
+  font-size: 12px;
+  color: #ffffff;
+  background-color: black;
+}
+
+//商品价格样式
+.origin-price {
+  font-family: Arial,Helvetica,sans-serif;
+  font-size: 20px;
+  color: red;
+}
+
+//字体大小格式
+.small-font-size {
+  font-size: 12px;
+}
