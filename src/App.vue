@@ -22,13 +22,13 @@
 //引入normalize样式
 import './common/css/normalize.css'
 //公共样式
-import './common/css/common.css'
-import LastNews from './components/last-news.vue'
-import MyHeader from './components/my-header.vue'
-import Tab from './components/tab/tab.vue'
-import LogForm from './components/LogForm/LogForm.vue'
-import MyFooter from './components/myfooter/my-footer.vue'
-import MadolBox from './components/Madol-Box/Modal-Box.vue'
+// import './common/css/common.css'
+import LastNews from './components/LastNews.vue'
+import MyHeader from './components/MyHeader.vue'
+import Tab from './components/Tab.vue'
+import LogForm from './components/LogForm.vue'
+import MyFooter from './components/MyFooter.vue'
+import MadolBox from './components/ModalBox.vue'
 export default {
   name: 'app',
   data(){

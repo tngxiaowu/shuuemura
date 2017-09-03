@@ -170,7 +170,7 @@
 </template>
 
 <script>
-import NavBread from './../components/navbread/navbread.vue'
+import NavBread from './../components/NavBread.vue'
 export default {
 
   name: 'itemdetail',

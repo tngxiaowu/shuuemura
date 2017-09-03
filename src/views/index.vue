@@ -66,8 +66,8 @@
 </template>
 
 <script>
-import MyCarousel from './../components/Carousel/Carousel.vue'
-import StarProduct from './../components/starproduct/starproduct.vue'
+import MyCarousel from './../components/MyCarousel.vue'
+import StarProduct from './../components/StarProduct.vue'
 export default {
   name: 'index',
   data () {

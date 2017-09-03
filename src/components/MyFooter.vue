@@ -51,24 +51,24 @@
 		</div>
 		<div class="media">
 			<ul class="media-wrap">
-				<li class="media-weixin-icon"><img src="./../../../static/img/index/media-weixin.jpg" alt="植村秀官方微信"></li>
-				<li class="media-sina-icon"><img src="./../../../static/img/index/media-sina.jpg" alt="植村秀官方微博"></li>
+				<li class="media-weixin-icon"><img src="./../../static/img/index/media-weixin.jpg" alt="植村秀官方微信"></li>
+				<li class="media-sina-icon"><img src="./../../static/img/index/media-sina.jpg" alt="植村秀官方微博"></li>
 				<li class="media-mobile-icon">
-					<img src="./../../../static/img/index/media-mobile.jpg" alt="植村秀手机版" class='phone'>
+					<img src="./../../static/img/index/media-mobile.jpg" alt="植村秀手机版" class='phone'>
 					<div class='media-item media-mobile'>
-						<img src="./../../../static/img/index/media-weixin.jpg" alt="二维码" class='phonesao'>
+						<img src="./../../static/img/index/media-weixin.jpg" alt="二维码" class='phonesao'>
 					</div>
 				</li>
 			</ul>
 		</div>
-		<a href="" class='cxwz-logo'><img src="./../../../static/img/index/cert.png"></a>
+		<a href="" class='cxwz-logo'><img src="./../../static/img/index/cert.png"></a>
     </div>
     <div class="benan">
 		<p>通过浏览这个网站，你接受才能使用cookies为您提供的广告适合您的利益，进行流量统计数据，并促进信息在社交网络上的共享。点击<a href="">Cookies政策</a>了解详情</p>
 		<p class="margin10_T">
 			<a href="" class="margin05_R">沪ICP备06001333号-1</a>
 			<a href="" class="margin05_R">
-				<img src="./../../../static/img/index/beian.png" alt="沪公网安备">沪公网安备 31010602001532号
+				<img src="./../../static/img/index/beian.png" alt="沪公网安备">沪公网安备 31010602001532号
 			</a>
 			© L'Oreal China 欧莱雅（中国）有限公司版权所有
 		</p>
