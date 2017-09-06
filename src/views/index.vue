@@ -1,7 +1,7 @@
 <template>
   <div class="index">
     <!-- 轮播图组件 -->
-    <my-carousel></my-carousel>
+    <!-- <my-carousel></my-carousel> -->
     <div class="promotion-banner">
       <a href="">
         <img src="./../../static/img/index/promotion-banner-try.jpg">  
@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import MyCarousel from './../components/MyCarousel.vue'
+// import MyCarousel from './../components/MyCarousel.vue'
 import StarProduct from './../components/StarProduct.vue'
 export default {
   name: 'index',
@@ -77,7 +77,7 @@ export default {
     }
   },
   components:{
-    MyCarousel,
+    // MyCarousel,
     StarProduct
   }
 }

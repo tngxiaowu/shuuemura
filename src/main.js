@@ -3,17 +3,39 @@
 import 'babel-polyfill'
 import Vue from 'vue'
 import App from './App'
+import axios from 'axios'
 import router from './router'
+//导入Vuex插件
+import Vuex from 'vuex'
 import fastclick from 'fastclick'
+
+//注册Vuex
+Vue.use(Vuex)
 
 Vue.config.productionTip = false
 
 fastclick.attach(document.body)
 
+const store = new Vuex.Store({
+	state:{
+		nickName:'',
+		cartCount:''
+	},
+	mutations:{
+		updateUserInfo(state,nickName){
+			state.nickName = nickName;
+		},
+		updateCartCount(state){
+			state.cartCount += cartCount;
+		}
+	}
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
+  store,
   template: '<App/>',
   components: { App }
 })

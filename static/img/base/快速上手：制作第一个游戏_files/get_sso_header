@@ -1,0 +1,9 @@
+var base_url = location.href;
+var client_id = 215;
+var sso_signup_url = 'https://passport.cocos.com/auth/signup'+'?client_id='+client_id+'&url='+base_url;
+var sso_signin_url = 'https://passport.cocos.com/sso/signin'+'?client_id='+client_id+'&url='+base_url;
+var sso_signout_url = 'https://passport.cocos.com/sso/signout?client_id=215'+'?client_id='+client_id+'&url='+base_url;
+var content = '<link type="text/css" rel="stylesheet" href="https://cn.cocos.com/coco/css/cocos_head.css?t=20160303" />';
+content += '<div class="headerbg" id="cocos_top">';
+content += '<div class="wrap clearfix" style="height:30px;">';
+content += '<h1 class="logo"><a href="http://www.cocos.com/"><span>Cocos</span>官网</a></h1>';content += '<div class="fr usermenu" onmouseout="javascript:document.getElementById(\'CocosUsered\').style.display=\'none\';" onmouseover="javascript:document.getElementById(\'CocosUsered\').style.display=\'block\';" id="sso_user">';content += '<a href="javascript:void(0)" id="user" class="clearfix">';content += '<span class="fl">454789898@qq.com</span>';content += '<i class="icon_drop fl"></i>';content += '</a><ul id="CocosUsered">';content += '<li><a href="https://cn.cocos.com/user/info?m=1" ><i></i>管理帐号</a></li>';content += '<li class="quitico"><a   href="'+sso_signout_url+'"><i></i>退出登录</a></li></ul></div>';content += '</div></div>';document.write(content);

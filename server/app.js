@@ -7,6 +7,17 @@ var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
+//引入user.js
+
+//引入Good.js
+var goods = require('./routes/goods.js')
+
+var tempcartlist = require('./routes/temp-cart-list.js')
+
+
+
+
+
 
 var app = express();
 
@@ -23,7 +34,14 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/users', users);
+app.use('/users',users);
+//引入Goods
+
+app.use('/goods',goods);
+
+app.use('/tempcartlist',tempcartlist);
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -12,28 +12,39 @@
    				<a href="##">
    					订阅电子杂志	
    				</a>
-   				<!-- <div class="subcribe">
-   					获取植秀村最新资讯<br>
-   					<input type="text" name=""><br>
-   						<button>提交</button>
-   					
-   				</div> -->
-   				
    			</li>
-   			<li class="login">
-   				<a href="##" @click='getLogin'>
+   			<li class="login" v-if='!nickName'>
+   				<a href="##" @click='openMoadlBox()'>
    					登录	
    				</a>
    			</li>
+   			<li v-if='nickName'> 
+   					<a href="##">
+   						{{ nickName }} 	
+   					</a>
+   				</li>
    			<li class="style">
    				|
    			</li>
-   			<li class="register">
+   			<li class="register" v-if='nickName'>
+   				<a href="">
+   					个人中心
+   				</a>
+   			</li>
+   			<li class="register" v-if='!nickName'>
    				<a href="">
    					注册	
    				</a>
-   				
    			</li>
+   			<li class="style" v-if='nickName'>
+   				|
+   			</li>
+   			<li class="quit" v-if='nickName'>
+   				<a @click='logout()'>
+   					退出
+   				</a>
+   			</li>
+
    			<li>
    				<span class="shoppingbag">
    					<img src="./../../static/img/index/shopping-bag.jpg" height="14" width="13">
@@ -41,14 +52,15 @@
    				<a href="">
    					我的购物袋 （ {{ shoppingBag }} ）
    				</a>
-   				
    			</li>
+
    		</ul>
    	</div>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: 'navhader',
   data(){
@@ -56,11 +68,47 @@ export default {
   		shoppingBag:1
   	}
   },
+   computed:{
+    nickName(){
+      return this.$store.state.nickName;  
+    }
+    
+  },
   methods:{
-  	getLogin(){
+  	openMoadlBox(){
   		this.$emit('log-on');
-  	}
-  }
+  	},
+
+  	//检查是否登录
+  	checkLogin(){
+      axios.post('/users/checkLogin').then((response)=>{
+        var res = response.data;
+        if( res.status == '0'){
+        	this.$store.commit('updateUserInfo',res.result)
+        }else{
+        	console.log(res.msg);
+        }
+      })
+    },
+
+    //登出
+    logout(){
+    	axios.post('/users/logout').then((response)=>{
+    		console.log('点击成功');
+    		var res = response.data;
+    		if(res.status == '0'){
+    			console.log(res.result);
+    			this.$store.commit('updateUserInfo',res.result)
+    			console.log(res.msg);
+    		}else{
+    			console.log(res.msg);
+    		}
+    	})
+    }
+  },
+  mounted:function(){
+  	this.checkLogin();
+  },
 }
 </script>
 
@@ -141,6 +189,11 @@ export default {
 		margin-left:2px;
 		padding-left: 0px;
 		padding-right: 0px;
+	}
+
+	.nav-right ul .quit{
+		margin-left: 5px;
+		padding-left: 5px;
 	}
 
 	.nav-right ul .style{

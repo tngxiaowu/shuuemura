@@ -92,7 +92,7 @@
 				</span>
 			</div>
 			<div class="add-to-cart-area">
-				<button v-if='0' class="add-to-cart-btn">放入购物车 > </button>
+				<button v-if='1' class="add-to-cart-btn" @click='addCart()'>放入购物车 > </button>
 				<button v-else class="goods-arrival-notification">到货通知 > </button>	
 			</div>
 			<div class="promotion-area">
@@ -170,6 +170,7 @@
 </template>
 
 <script>
+import axios from 'axios'
 import NavBread from './../components/NavBread.vue'
 export default {
 
@@ -178,10 +179,10 @@ export default {
   data () {
     return {
     	currentIndex:0,
-    	itemList:["描述","成分","用途"],
     	showDes: true,
     	showUse: false,
     	showCom: false,
+    	product:{},
     	productList:[
 
     	],
@@ -277,9 +278,44 @@ export default {
   	},
   	onSelect(event){
   		console.log(event);
+  	},
+
+  	// getItem(){
+  	// 	var parma = {
+  	// 		modeCode:this.$route.query.itemid
+  	// 	};
+  	// 	axios('/goods',{params: parma}).then((response)=>{
+  	// 		var res =response.data;
+  	// 		if(res.status == '0'){
+  	// 			this.product = res.reslut;
+  	// 		}
+  	// 	})
+  	// },
+
+
+  	addCart(){
+  		//这里要传入三个参数 一个商品的数量 一个商品的id 还有商品的规格
+  		axios.post('/goods/addCart').then((response)=>{
+  			var res = response.data;
+  			if(res.status == '0'){
+  				console.log(res.msg);
+  			}else{
+  				console.log(res.msg);
+  			}
+  		})
+  	},
+
+  	getId(){
+  		console.log(this.$route.params.id1);
+  		
   	}
 
-  }
+  },
+  mounted:function(){
+   this.getId();
+  },
+  
+
 }
 </script>
 

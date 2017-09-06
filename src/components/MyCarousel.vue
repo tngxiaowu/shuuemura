@@ -1,25 +1,102 @@
 <template>
-  <div class="carousel">
-  轮播图组件(冯咚开发中)
-  </div>
+	<div class="container">
+		<div class="image">
+			<a href="#/11">
+				<img :src="images[index].src" alt="">
+			</a>
+		</div>
+
+		<div class="btn">
+			<li v-for="(item,index) in images" @mouseenter="change(index)"></li>
+		</div>
+		
+	</div>
 </template>
 
 <script>
-export default {
-  name: 'carousel',
-  
-}
+	export default{
+		data(){
+			return{
+				timer:null,
+				index:0,
+				images:[
+					{
+						src:"../../static/images/2017062001kv.jpg",
+						url:"##"
+					},
+					{
+						src:"../../static/images/2017062004kv.jpg",
+						url:"##"
+					},
+					{
+						src:"../../static/images/2017062901kv.webp",
+					},
+					{
+						src:"../../static/images/2017062902kv.jpg",
+						url:"##"
+					},
+					{
+						src:"../../static/images/2017071202kv.jpg",
+						url:"##"
+					},
+					{
+						src:"../../static/images/2017081501KV.webp",
+						url:"##"
+					},
+					{
+						src:"../../static/images/2017062801kv.jpg",
+						url:"##"
+					}
+				]
+			}
+		},
+		methods:{
+			next(){
+				this.index++;
+				if(this.index==this.images.length){
+					this.index=0;
+				}			
+			},
+			play(){
+				var that = this
+				this.timer = setInterval(function(){
+					that.next()
+				},2000);
+			}
+			,
+			change(e){
+				this.index=e;
+			}
+		},
+		created(){
+			this.play();
+		}
+	}
 </script>
-
-<style type="text/css">
-	.carousel{
-		width: 1280px;
+<style scoped>
+	.container{
+		position: relative;
+		max-width: 1280px;
 		margin: 0 auto;
-		height: 520px;
-		border: 1px solid #edc7d6;
-		text-align: center;
-		line-height: 520px;
-		font-size: 40px;
+		z-index: 1;
+	}
+	.btn{
+		position: absolute;
+		right: 50px;
+		top: 480px;
+		z-index: 1;
+		
+	}
+	.btn li{
+		list-style: none;
+		float: left;
+		height: 15px;
+		width: 15px;
+		border-radius: 50%;
+		margin: 0 10px;
+		background-color: rgba(0,0,0,.4);
+	}
+	.btn li:hover{
+		background-color: rgba(0,0,0,1);
 	}
 </style>
-

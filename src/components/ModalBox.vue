@@ -4,8 +4,9 @@
 	    <div class="modal-container-box" >
 	    	<transition name="fade">
 		    	<div class="modal-container"  transition="fade">
-		   			 <div class="close" @click="show=!show">X</div>
-		   				hello,这是一个新的模态框组件~
+		   			 <div class="close" @click="closeModalBox()">X</div>
+		   			 	<slot name='brandHeader'></slot>
+		   				<slot name='content'></slot>
 		    	</div>
 	   		 </transition>
 	    </div>	
@@ -21,8 +22,10 @@ export default {
 			show:true
 		}
 	},
-  	components:{
-     
+  	methods:{
+  		closeModalBox(){
+  			this.$emit('close-modal-box');
+  		}
   	}
 }
 </script>
@@ -34,16 +37,17 @@ export default {
 		left:50%;
 		transform: translate(-50%,-50%);
 
+
 	}
 	.modal-container{
-		padding: 50px;
-		
+		padding: 0px;
 		background-color: #fff;
 		position: absolute;
 		top: 50%;
 		left:50%;
 		transform: translate(-50%,-50%);
 		border-radius: 10px;
+		width: 945px;
 	}
 	#app{
 		position: fixed;
@@ -64,8 +68,8 @@ export default {
 		background-color: #000;
 		cursor: pointer;
 		position: absolute;
-		right: 5px;
-		top: 5px;
+		right: 25px;
+		top: 25px;
 		border-radius: 50%;
 	}
 	.fade-enter-active, .fade-leave-active {
