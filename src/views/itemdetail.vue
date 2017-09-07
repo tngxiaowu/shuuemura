@@ -295,7 +295,7 @@ export default {
 
   	addCart(){
   		//这里要传入三个参数 一个商品的数量 一个商品的id 还有商品的规格
-  		axios.post('/goods/addCart').then((response)=>{
+  		axios.post('/goods/addCart',{modelCode:1001,itemStandard:'米色50g常规版',itemNumber:2}).then((response)=>{
   			var res = response.data;
   			if(res.status == '0'){
   				console.log(res.msg);

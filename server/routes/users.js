@@ -141,16 +141,16 @@ router.get('/checkUserEmail',(req,res,next)=>{
 	})
 })
 
-var userID = 0;
+
 //注册接口
 router.post('/register',(req,res,next)=>{
 	//获取注册表格中的email和密码
 	var registerEmail = req.body.registerEmail;
 	var registePassword = req.body.registePassword;
-	userID+=1;
+	var userID = Math.floor(Math.random()*100000);
 	var user = new User({
 		"userID" : userID,
-	    "userName" : 'Tom',
+	    "userName" : 'jack',
 	    "userPwd" : registePassword,
 	    "userEmail" : registerEmail,
 	    "orderList" : [],

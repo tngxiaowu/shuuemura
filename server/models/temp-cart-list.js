@@ -7,10 +7,9 @@ var tempCartKistSchema = new Schema({
 	"visitorID" : String,
 	"cartList":[{
 		"modeCode": String,
-    	"item": String,
-    	"Number": Number
-		}		
-	]
+        "Name":String,
+        "Number": Number
+		}]
     
 })
 

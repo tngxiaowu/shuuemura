@@ -152,7 +152,7 @@ export default {
     //登录
     register(){
         //当发送Post请求时，将用户名/密码/cookie设置的长度传给后台
-        axios.post('/users/register',{registerEmail: this.registerEmail,registePassword: this.registePassword}).then((response)=>{
+        axios.post('/users/register',{registerEmail: this.registerEmail,registePassword: this.registePassword1}).then((response)=>{
           var res = response.data;
           if(res.status == '0'){
             console.log(res.msg);
