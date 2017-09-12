@@ -1,17 +1,17 @@
 <template>
   <div class="itemdetail-view">
-	<nav-bread>
+	<!-- <nav-bread>
 		<li slot='family'>
 			<a :href='familyPath'> {{ family }}	</a>
 		</li>
-		<li slot='productChineseName'> {{ productChineseName}} </li>
-	</nav-bread>
+		<li slot='productChineseName'> {{ model.ModelChName }} </li>
+	</nav-bread> -->
   	<!-- 基本信息部分 -->
  	<div class="basic-information clearfix"> 
  	<!-- 基本信息-左部分 -->
  		<div class="basic-information-header">
-			<h3 class="productChName">{{ productChineseName }}</h3>
-			<span class="productEnName"> {{ prodcutEnglishName }} </span>
+			<h3 class="productChName">{{ model.ModelChName }}</h3>
+			<span class="productEnName"> {{ model.ModelEngName }} </span>
 		</div>
 		<div class="basic-information-left">
 			<div class="productTab none-gap-span">
@@ -33,13 +33,13 @@
 			</div>
 				<div class="productTab-area">
 					<p v-if='showDes'>
-						{{ productDescripition }}
+						{{ model.ModelDescripition }}
 					</p>
 					<p v-if='showCom'>
-						{{ productComposition }}	
+						{{ model.ModelComposition }}	
 					</p>
 					<p v-if='showUse'>
-						{{ productUsage }}		
+						{{ model.ModelUsage }}		
 					</p>
 				</div>
 		
@@ -54,7 +54,10 @@
 						<a href="">
 							{{ productCommentNum }}	
 						</a>条评论&nbsp|	
-					</span><a>书写评论</a> 
+					</span>
+					<a @click='showCommentBox = true'>
+					书写评论
+					</a> 
 					
 				</div>
 			</div>
@@ -63,8 +66,7 @@
 		<!-- 基本信息-中间部分 -->
 		<div class="basic-information-middle">
 			<img 
-			v-for='item in ProductStanard'
-			:src='"static/img/goods/"+item.imgLink'
+			:src='"static/img/goods/"+relatedItem[0].itemImg'
 			v-if=""
 			>
 		</div>
@@ -75,24 +77,39 @@
 				
 			</div>
 			<div class="ProductStanard">
-				<label>规则:</label>
-				<select @change='onSelect($event)'>
-					<option v-for='item in ProductStanard' :value='item.name'>
-						{{ item.name }}
+				<label>规格:</label>
+				<select v-model='value'>
+					<option 
+					v-for='(item,index) in model.item' 
+					v-model='item.itemStandard'
+					>
+						{{ item.itemStandard }}
 					</option>
-				{{ ProductStanard }}
+				
 				</select>	
 			</div>
 			<div class="BuyAmount">
-				<label>数量:</label><select></select>	
+				<label>数量:</label>
+				<select v-model='buyAmount' v-if='relatedItem[0].itemNumber'>
+					<option>1</option>
+					<option>2</option>
+					<option>3</option>
+					<option>4</option>
+					<option>5</option>
+				</select>	
+				<select v-else>
+					<option>1</option>
+				</select>
 			</div>
 			<div class="price-area">
-				<span class="true-price">
-					￥ {{ ProductTruePrice}}	
+				<span 
+				class="true-price"
+				>
+					￥ {{ model.ModelOriginPrice}}	
 				</span>
 			</div>
 			<div class="add-to-cart-area">
-				<button v-if='1' class="add-to-cart-btn" @click='addCart()'>放入购物车 > </button>
+				<button v-if='relatedItem[0].itemNumber' class="add-to-cart-btn" @click='addCart(relatedItem[0].itemStandard)'>放入购物车 > </button>
 				<button v-else class="goods-arrival-notification">到货通知 > </button>	
 			</div>
 			<div class="promotion-area">
@@ -102,14 +119,13 @@
 				分享:	
 			</div>
 			
-			
 		</div>
  	</div>
 
  	<!-- 产品详情部分 -->
  	<div class="item-detail">
  		<h2>产品详情</h2>
-		<img :src='"static/img/goods/"+ productDetailImg'> 		
+		<img :src='"static/img/goods/"+ model.ModelDetailImg'> 		
  	</div>
 
 	<!-- 评论部分 -->
@@ -149,9 +165,6 @@
  			</ul>
  			
  		</div>
-
-
- 		
  	</div>
 
  	<!-- 建议搭配使用部分 -->
@@ -165,12 +178,50 @@
  		<h2>浏览过的产品</h2>
  		<p>待做</p>
  	</div>
+
+ 	<!-- 打分组件 -->
+   <madol-box v-if="showCommentBox" @close-modal-box='showCommentBox = false'>
+     <div slot='content' class="main-content">
+     	<div class="comment-left" >
+     		<h3> {{ model.ModelChName }} </h3>
+     		<img :src='"static/img/goods/"+relatedItem[0].itemImg'>
+     	</div>
+     	<div class="comment-right">
+     		<div>
+     			<h3>发表评论</h3>
+     			<div>
+					
+     			</div>
+     		  </div>
+     		<div v-if='showComemt'>
+     			<h3>详细评论</h3>
+     			<span>评论：</span>
+     			<textarea v-model='commentContent'></textarea>
+     			<button @click='addComment()'>提交</button>
+     		</div>
+			<div v-if='showAddpic' class="addPic">
+				<span>上传图片：</span>
+				<input type="file" name="" @change='getFile' >
+				<input type="file" name="" @change='getFile'>
+				<input type="file" name="" @change='getFile'>
+				<img src=path>
+				<button @click='uploadImg()'>提交</button>
+			</div>
+
+     		<div v-if='showThanks'>
+     			感谢您的评论
+     		</div>
+     		
+     	</div>
+     </div>
+   </madol-box>
     
   </div>
 </template>
 
 <script>
 import axios from 'axios'
+import MadolBox from './../components/ModalBox.vue'
 import NavBread from './../components/NavBread.vue'
 export default {
 
@@ -178,54 +229,51 @@ export default {
 
   data () {
     return {
-    	currentIndex:0,
+    	path:'',
+    	showCommentBox:false,
+    	showAddpic: true,
+    	commentContent:'',
+    	files:'',
+    	isAnonymous:false,
+    	modelCode: '1001',
+    	showComemt:true,
+    	showThanks:false,
+    	value:'米色50g常规版',
+    	selectValue:'',
+    	currentStandard:0,
+    	buyAmount:1,
     	showDes: true,
     	showUse: false,
     	showCom: false,
-    	product:{},
-    	productList:[
-
-    	],
-
-    	productId:'10000000000000',
-    	productChineseName: '绿茶新肌洁颜油',
-    	prodcutEnglishName: 'Anti oxi 450ml',
-    	productDescripition: `
-    	植村秀第1款抵御污染、抗击氧化的洁颜油
-		尊享美丽，抵御污染侵袭，造就无尘肌肤！
-		植村秀突破性的抗氧化配方卓有成效的清除肌肤浊质，令肌肤回复自然纯净，焕发美丽年轻光彩。
-		难以置信的强大功效
-		全新绿茶新肌洁颜油，高效清除环境污染物，还肌肤以自然健康神彩，能有效去除隐匿在肌肤中的污染杂
-		质。
-		
-
-		您可前往最近的植村秀专柜免费体验专业塑眉服务。
-		`,
-    	productComposition: `
-		描述
-		所含成分
-		使用方法
-		天然青木瓜酵素--溶解老废角质，帮助肌肤排毒，澄净明亮肌立现
-		辣木精粹 -- 有效对抗污染，强力吸附污染物，带来有效洁净体验
-
-
-    	`,
-    	productUsage:'usage',
+    	model:{
+    		"ModeCode" : 1001,
+		    "ModelChName" : "毛孔柔焦CC泡沫隔离液 SPF30 PA+++",
+		    "ModelEngName" : "UVUB PORERASER CC",
+		    "ModelOriginPrice" : 390,
+		    "ModelDescripition" : "hhhahah",
+		    "ModelComposition" : "hhhhhhhh",
+		    "ModelUsage" : "hhhhhhhh",
+		    "ModelCoverImg" : "skin-face-base-cover-001.jpg",
+		    "ModelDetailImg" : "item-10000001-detail.jpg",
+		    "ModeRate" : 5,
+		    "ModelComment" : [],
+		    "item" : [ 
+		        {
+		            "itemStandard" : "米色50g常规版",
+		            "itemNumber" : 3,
+		            "itemImg" : "1.jpg"
+		        }, 
+		        {
+		            "itemStandard" : "深色色50g常规版",
+		            "itemNumber" : 0,
+		            "itemImg" : "2.jpg"
+		        }
+		    ],
+		    "departmentCode" : "skincare",
+		    "subDepartmentCode" : "face",
+		    "familyCode" : "base"
+    	},
     	productCommentNum:15,
-    	ProductStanard:[
-    		{   
-    			name: '450ml（常规版）',
-    			imgLink:'item-10000001-001.jpg',
-    			productStockNum:1
-    		},
-    		{
-    			name: '450ml (Ambush限量）',
-    			// imgLink:'item-10000001-002.jpg',
-    			productStockNum:0
-    		}
-    	],
-    	ProductTruePrice: 725,
-    	productDetailImg:'item-10000001-detail.jpg',
     	productComment:[
     		{
     			userId: 100001,
@@ -244,7 +292,6 @@ export default {
     			rate: 5,
     			date: '2017-8-31',
     			comment:'哈哈哈',
-
     		}
 
     	],
@@ -253,9 +300,35 @@ export default {
     }
   },
   components:{
-  	NavBread
+  	NavBread,
+  	MadolBox
+  },
+  computed:{
+  		relatedItem(){
+  			var that = this;
+  			return this.model.item.filter((item)=>{
+  				return item.itemStandard == that.value;
+  			})
+
+  		}
   },
   methods:{
+  	test(item){
+  		// this.$router.push({path:'/index',query:{'status':1,'email':1001}})
+  		console.log(this.value);
+  		console.log(item);
+
+  	},
+
+  	//打开评论
+  	openCommentBox(){
+  		this.showComemtBox = true;
+  	},
+
+  	showIndex(index){
+  		alert(index);
+  	},
+
   	truntocontent(index){
   		if(index == "Des")
   		{
@@ -280,22 +353,21 @@ export default {
   		console.log(event);
   	},
 
-  	// getItem(){
-  	// 	var parma = {
-  	// 		modeCode:this.$route.query.itemid
-  	// 	};
-  	// 	axios('/goods',{params: parma}).then((response)=>{
-  	// 		var res =response.data;
-  	// 		if(res.status == '0'){
-  	// 			this.product = res.reslut;
-  	// 		}
-  	// 	})
-  	// },
-
+  	//获取商品详情的方法
+  	getModelDetail(){
+  		var parma = {modelCode:this.$route.query.modelCode}
+  		console.log(this.$route.query.modelCode);
+  		axios.get('/goods/itemDetail',{params: parma}).then((response)=>{
+  			var res =response.data;
+  			if(res.status == '0'){
+  				this.model = res.reslut;
+  			}
+  		})
+  	},
 
   	addCart(){
   		//这里要传入三个参数 一个商品的数量 一个商品的id 还有商品的规格
-  		axios.post('/goods/addCart',{modelCode:1001,itemStandard:'米色50g常规版',itemNumber:2}).then((response)=>{
+  		axios.post('/goods/addCart',{modelCode:1001,itemStandard:'450ml常规版',itemNumber:2}).then((response)=>{
   			var res = response.data;
   			if(res.status == '0'){
   				console.log(res.msg);
@@ -308,11 +380,74 @@ export default {
   	getId(){
   		console.log(this.$route.params.id1);
   		
+  	},
+
+  	//提交评论方法
+  	addComment(){
+  		//如果输入内容为空
+  		if(!this.commentContent){
+  			console.log('您输入内容为空，请输入内容！')
+  		}
+  		//输入内容不为空
+  		else{
+	  			axios.post('/goods/addComment',{
+	  			//用户评论内容
+	  			commentContent: this.commentContent,
+	  			//商品款式
+	  			modelCode: this.modelCode,
+	  			//商品ModeCode
+	  			//是否匿名
+	  			isAnonymous: this.isAnonymous
+	  			})
+	  			.then((response)=>{
+	  			var res = response.data
+	  			if(res.status == '0'){
+	  				this.showThanks = true;
+	  				this.showComemt = false;
+	  				console.log(res.msg);
+	  			}else{
+	  				console.log(res.msg);
+	  			}
+	  		})
+  		}
+  	},
+
+  	getFile(e){
+  		this.files = e.target.files[0];
+  		console.log(e.target);
+  		console.log(this.files);
+  	},
+
+  	uploadImg(){
+  		// event.preventDefault();
+        var formData = new FormData()
+        formData.append("file", this.files)
+        
+        var config = {
+              headers: {
+                // 'Content-Type': 'multipart/form-data'
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        }
+        
+        axios.post('/goods/uploadImg',formData,config).then((response)=>{
+        	var res = response.data;
+        	if(res.status == '0'){
+        		console.log(res.msg);
+        		this.path = res.result
+        		console.log(res.result);
+        	}
+        })
+
   	}
 
+
+
+ 	
+
   },
-  mounted:function(){
-   this.getId();
+  created:function(){
+   // this.getModelDetail();
   },
   
 
@@ -321,6 +456,21 @@ export default {
 
 
 <style scoped>
+	.main-content{
+		height: 562px;
+		width: 962px;
+	}
+
+	.comment-left{
+		float: left;
+		width: 240px;
+	}
+
+	.comment-right{
+		float: left;
+		width: 560px;
+	}
+
 	a{
 		color: #000;
 		cursor: pointer;
@@ -352,7 +502,6 @@ export default {
 		height: 17px;
 		font-size: 10px;
 		line-height: 17px;		
-		
 	}
 
 	
@@ -568,6 +717,15 @@ export default {
 		
 	}
 
+	.addPic>input{
+		width: 98px;
+		height: 98px;
+		display: inline-block;
+		opacity: .3;
+		border: 1px solid #ccc;
+		cursor: pointer;
+	}
+	
 
 
 

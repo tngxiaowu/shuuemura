@@ -75,7 +75,7 @@ router.post('/checkLogin',(req,res,next)=>{
 	}else{
 		res.json({
 			status: '1',
-			msg:'用户未登录'
+			msg:'用户未登录(from:检查登录)'
 		})
 	}
 })
@@ -153,6 +153,10 @@ router.post('/register',(req,res,next)=>{
 	    "userName" : 'jack',
 	    "userPwd" : registePassword,
 	    "userEmail" : registerEmail,
+	    "male": '女士',
+    	"name": '',
+    	"mobPhone": '',
+    	"brithDay": '',
 	    "orderList" : [],
 	    "cartList" : [],
 	    "adressList" : []
@@ -173,6 +177,69 @@ router.post('/register',(req,res,next)=>{
 		}
 	})
 })
+
+//个人中心-加载订单数据
+router.post('/getOrderData',(req,res,next)=>{
+	//个人中心页面判定userId是否存在？
+	if(req.cookies.userId){
+		var parma = {'userID':req.cookies.userId}
+		User.findOne(parma,(err,userDoc)=>{
+			if(err){
+				res.json({
+					status: '3',
+					msg: err.message
+				})
+
+			}else{
+				if(userDoc){
+					res.json({
+						status:'0',
+						result: userDoc.orderList
+					})
+
+				}
+			}
+		})
+
+	}else{
+		res.json({
+			status:'1',
+			msg:'用户未登录(from:用户中心)'
+		})
+	}
+})
+
+//个人中心-加载基本信息+收货地址
+router.post('/getAddressList',(req,res,next)=>{
+	//个人中心页面判定userId是否存在？
+	if(req.cookies.userId){
+		var parma = {'userID':req.cookies.userId}
+		User.findOne(parma,(err,userDoc)=>{
+			if(err){
+				res.json({
+					status: '3',
+					msg: err.message
+				})
+
+			}else{
+				if(userDoc){
+					res.json({
+						status:'0',
+						result: userDoc
+					})
+
+				}
+			}
+		})
+
+	}else{
+		res.json({
+			status:'1',
+			msg:'用户未登录(from:用户中心)'
+		})
+	}
+})
+
 
 
 

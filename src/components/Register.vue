@@ -147,19 +147,38 @@ export default {
         this.passwordSameError = false;
        }
     },
+    
+    //注册后自动登录
+    login(){
+        //当发送Post请求时，将用户名/密码/cookie设置的长度传给后台
+        axios.post('/users/login',{userEmail: this.registerEmail,userPassword: this.registePassword1,maxAge: this.maxAge}).then((response)=>{
+          var res = response.data;
+          if(res.status == '0'){
+            this.$store.commit('updateUserInfo',res.result)
+            console.log(res.msg);
+            this.$emit('log-success');
+          }else{
+            console.log(res.msg);
+          }
+        })
+      },
 
 
-    //登录
+
+    //注册
     register(){
         //当发送Post请求时，将用户名/密码/cookie设置的长度传给后台
         axios.post('/users/register',{registerEmail: this.registerEmail,registePassword: this.registePassword1}).then((response)=>{
           var res = response.data;
           if(res.status == '0'){
+            //注册成功后 
             console.log(res.msg);
             //模态框消失
             this.$emit('reg-success')
+            //进行登录
+            this.login();
             //跳转到欢迎注册页
-            this.$router.push({path:'/accoutWelcome'})
+            this.$router.push({path:'/welcome',query:{'status':1,'email':this.registerEmail}})
           }else{
            
           }

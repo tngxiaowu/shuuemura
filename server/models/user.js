@@ -8,6 +8,10 @@ var userSchema = new Schema({
     "userName" : String,
     "userPwd" : String,
     "userEmail" : String,
+    "male": String,
+    "name": String,
+    "mobPhone": String,
+    "brithDay": String,
     "orderList" : Array,
     "cartList" : Array,
     "adressList" : Array

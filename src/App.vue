@@ -28,8 +28,8 @@
         </div>
         
       </div>
-  
    </madol-box>
+
   </div>
 </template>
 

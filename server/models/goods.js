@@ -24,8 +24,6 @@ var productSchema = new Schema({
 	//商品详情图
 	"ModelDetailImg": String,
 	//商品评分
-	"ModeRate": Number,
-	//商品评论
 	"ModelComment": Array,
 	//产品规格/分类
 	"item": Array,
