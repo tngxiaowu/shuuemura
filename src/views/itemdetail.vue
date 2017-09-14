@@ -1,5 +1,6 @@
 <template>
   <div class="itemdetail-view">
+  	<button @click='getHistoryMode()'>看一看</button>
 	<nav-bread>
 		<li slot='family'>
 			<router-link :to='model.subDepartmentCode+"/"+model.familyCode'> {{ model.familyName }} </router-link>
@@ -174,8 +175,11 @@
  			</ul>
  		</div>
  		<div class="page-size">
- 			<ul>
- 				<li v-for='(item,index) in pageNumber' @click='pageStart = index+1' >
+ 			<ul class="clearfix">
+ 				<li v-for='(item,index) in pageNumber' 
+ 				@click='pageStart = index+1'
+				:class='{"selected": currentIndex == index}'
+ 				>
  					<a>
  					{{ item }} 		
  					</a>
@@ -195,7 +199,10 @@
  		<h2>浏览过的产品</h2>
  		<ul>
  			<li>
-				<img src="">
+ 				<div>
+ 					<img src="./../../static/img/goods/1008/SHU2013052701_m.jpg" height="150" width="90">	
+ 				</div>
+				
 				<button>查看</button>
 				<button>立即购买</button>
  			</li>
@@ -291,6 +298,7 @@ export default {
     	pageNumber:'',
     	pageSize:5,
     	pageStart:1,
+    	currentIndex:0,
     	//图片预览的地址
     	isRated:false,
     	dataUrl:'',
@@ -378,6 +386,10 @@ export default {
   			if(res.status == '0'){
   				this.model = res.result;
   				this.value = this.model.item[0].itemStandard;
+  				console.log('开始发送cookie')
+  				this.sendItemCookie();
+  				console.log(this.historyItem);
+  				console.log('开始获取历史记录商品')
   			}
   		})
   	},
@@ -572,7 +584,10 @@ export default {
 			if(res.status == '0'){
 				console.log('添加成功');
 			}else{
-				console.log('重复cookie');
+				this.getHistoryMode();
+  				this.countPageNumber();
+				// console.log(this.historyItem);
+				// console.log('重复cookie');
 
 				
 			}
@@ -588,28 +603,42 @@ export default {
   		this.pageNumber = newArray;
   	},	
 
+  	//计算加载页数
   	countPageNumber(){
-  		// var pageNumber = parseInt(Math.ceil(this.model.ModelComment.length/this.pageSize))
-  		// console.log('页数是',pageNumber);
-  		this.creatArray(2);
-  		
-
+  		var pageNumber = parseInt(Math.ceil(this.model.ModelComment.length/this.pageSize))
+  		console.log('页数是',pageNumber);
+  		this.creatArray(pageNumber);
   	},
 
+  	//请求历史浏览商品
+  	getHistoryMode(){
+  		if(this.historyItem<=1){
+  			console.log('不存在浏览记录')
+  		}else{
+  			var parma = {
+  			item1: this.historyItem[1],
+  			item2: this.historyItem[2],
+  			item3: this.historyItem[3],
+  			item4: this.historyItem[4],
+  			}
+  			console.log('parma是',parma);
+  			axios.get('/goods/getHistoryMode',{params:parma}).then((response)=>{
+  			var res = response.data;
+  			if(res.status == '0'){
+  				console.log(res.msg);
+  				}
+  			})
 
+  		}
+
+  		
+  			
+  		}
 	},
 	//钩子函数
-
-    created:function(){
-	   	this.getModelDetail();
-	   	this.sendItemCookie();
-	   	
-  	},
   	mounted:function(){
-  		this.countPageNumber();
+  		this.getModelDetail();
   	},
-  
-
 }
 
 
@@ -983,6 +1012,9 @@ export default {
 
 	.page-size ul{
 		text-align: center;
+		padding-left: 0px;
+		width: 100px;
+		margin: 0 auto;
 	}
 
 	.page-size ul li{

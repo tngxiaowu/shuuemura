@@ -250,7 +250,7 @@ router.post('/uploadImg',(req,res,next)=>{
 			})
 		}else{
 			if(isUnique){
-				if(itemCookie.length >= 4){
+				if(itemCookie.length >= 5){
 					itemCookie.shift();
 					itemCookie.push(modelCode);
 				}else{
@@ -268,13 +268,23 @@ router.post('/uploadImg',(req,res,next)=>{
 				msg:'重复的cookie'
 			})
 
-			}
-
-			
+			}	
 		}
-
-		
 	})
+
+	//获取浏览历史记录商品
+	router.get('/getHistoryMode',(req,res,next)=>{
+		var item1 = req.query.item1
+		var item2 = req.query.item2
+		var item3 = req.query.item3
+		var item4 = req.query.item4
+		console.log(item1,item2,item3,item4);
+		res.json({
+			status: '0',
+			msg:'连接成功'
+		})
+	})
+
 
 
 
