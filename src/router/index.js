@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Index from './../views/index.vue'
+import Index from './../views/index/index.vue'
 import ItemDetail from './../views/itemdetail.vue'
 import Welcome from './../views/welcome.vue'
 import MyAccount from './../views/myaccount/index.vue'

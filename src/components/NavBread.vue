@@ -23,6 +23,7 @@ export default {
 	ul{
 		font-size: 12px;
 		color: #999;
+		padding: 0px;
 	}
 	li{
 		list-style: none;

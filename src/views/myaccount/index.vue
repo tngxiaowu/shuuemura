@@ -1,7 +1,7 @@
 <template>
   	<div class="myaccount">
   	<!-- header -->
-	    <div class="wrap">
+	   <!--  <div class="wrap">
 			<h1 class="suLogo">
 				<a href=""></a>
 			</h1>
@@ -17,7 +17,7 @@
 					<a href="">我的购物袋</a>
 				</li>
 			</ul>
-	    </div>	
+	    </div>	 -->
 	    <!-- content -->
 	    <div class="core">
 			<div class="content">
@@ -36,7 +36,7 @@
 			</div>
 	    </div>
 	    <!-- footer -->
-	    <div class="wraps">
+	   <!--  <div class="wraps">
 			<a href="" class="suContactLink"></a>
 			<a href="" class="forumLink">植村秀社区</a>
 			<ul>
@@ -51,7 +51,7 @@
 				<input type="text" name='mail' class='orderMail' value="输入您的邮件地址">
 				<input type="button" value="订阅" class='orderSubmit'>
 			</div>
-	    </div>
+	    </div> -->
  	</div>
 </template>
 
@@ -61,87 +61,11 @@
 		name: 'welcome',
 		data(){
 		  	return{		
-		  		email: '45478988',  		
-		  		user:{
-		  		"userID" : "1",
-			    "userName" : "Tom",
-			    "userPwd" : 123456,
-			    "userEmail" : "454789898@qq.com",
-			    "orderList" : [
-			    	{
-			    		"orderNumber":"123456789",
-				    	"orderTotal":"999",
-				    	"products":"6",
-				    	"orderTime":"2017/9/1",
-				    	"orderStatus":"未完成",
-				    	"orderDetails":"电脑下单"
-				    },
-				    {
-			    		"orderNumber":"222222222",
-				    	"orderTotal":"899",
-				    	"products":"7",
-				    	"orderTime":"2017/5/20",
-				    	"orderStatus":"已完成",
-				    	"orderDetails":"手机下单"
-				    },
-				    {
-			    		"orderNumber":"888888888",
-				    	"orderTotal":"998",
-				    	"products":"2",
-				    	"orderTime":"2017/4/18",
-				    	"orderStatus":"已完成",
-				    	"orderDetails":"电脑下单"
-				    }
-			    ],
-			    "cartList" : [ 
-			        {
-			            "ModeCode" : 1001,
-			            "item" : [ 
-			                {
-			                    "itemStandard" : "深色色50g常规版",
-			                    "itemNumber" : 2,
-			                    "itemImg" : "2.jpg"
-			                }
-			            ]
-			        }
-			    ],
-			    "adressList" : [ 
-			        {
-			            "addressId" : "100002",
-			            "userName" : "Tom",
-			            "streetName" : "上海市金山区廊下镇",
-			            "postCode" : "110000",
-			            "tel" : "13817419413",
-			            "isDefault" : false
-			        }, 
-		        {
-		            "addressId" : "100003",
-		            "userName" : "Tom",
-		            "streetName" : "上海市宝山区杨行镇",
-		            "postCode" : "110001",
-		            "tel" : "1383838438",
-		            "isDefault" : true
-		        }, 
-		        {
-		            "addressId" : "100004",
-		            "userName" : "Wang QiYuan",
-		            "streetName" : "上海市浦东新区金桥镇",
-		            "postCode" : "110002",
-		            "tel" : "22222222222",
-		            "isDefault" : false
-		        }, 
-		        {
-		            "addressId" : "100005",
-		            "userName" : "yangyuanyuan",
-		            "streetName" : "上海市金山区廊下镇",
-		            "postCode" : "110003",
-		            "tel" : "33333333333",
-		            "isDefault" : false
-		        }
-		    ],
+		  				
+		  		
+		    
   		}
-  	}
-},
+  	},
 
 			components:{
 				ProfileIndex
@@ -183,8 +107,9 @@
 <style scoped>
 	.myaccount {
 		background: #757575;
-		margin: 0;
+		margin: 0 auto;
 		padding: 0;
+		width: 1280px;
 	}
 	/*header*/
 	.myaccount .wrap {

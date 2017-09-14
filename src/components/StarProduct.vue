@@ -8,8 +8,8 @@
         <div class="wrap">
         <transition name="fold">
 		   <ul class='starproduct-box clearfix'>
-			   	<li v-for='(item,index) in starProduct' v-if='slide?index>=5:index<5' class='box1'>
-			   		<img :src='"static/img/index/"+item.img'>
+			   	<li v-for='(item,index) in starProduct' v-if='slide?index<5:index>=5' class='box1'>
+			   		<img :src='"static/img/StarProduct/"+item.img'>
 			   		<p class="keywords">
 			   			{{ item.keyWords }}
 			   		</p>
@@ -17,7 +17,7 @@
 			   			{{ item.productName }}
 			   		</p>
 			   		<p class="price">
-			   			{{ item.productPrice }} / {{ item.productWeight }}
+			   			￥{{ item.productPrice }} / {{ item.productWeight }}
 			   		</p>
 			   		<button>立即购买</button>
 			   	</li>
@@ -53,71 +53,71 @@ export default {
   			productPrice:725,
   			productWeight:'450ml',
   			keyWords:'抗氧化 焕亮肌肤',
-  			img:'hotproductSHU2015092301.jpg'
+  			img:'hotproductSHU2013052701.webp'
   		},
   		{
-  			productName:'绿茶新肌洁颜油2',
-  			productPrice:725,
-  			productWeight:'450ml',
-  			keyWords:'抗氧化 焕亮肌肤',
+  			productName:'自动看到眉笔',
+  			productPrice:260,
+  			productWeight:'0.3g',
+  			keyWords:'双头妆效 自动便携',
   			img:'hotproductSHU2015092301.jpg'
 
   		},
   		{
-  			productName:'绿茶新肌洁颜油3',
-  			productPrice:725,
-  			productWeight:'450ml',
-  			keyWords:'抗氧化 焕亮肌肤',
-  			img:'hotproductSHU2015092301.jpg'
+  			productName:'砍刀眉笔',
+  			productPrice:200,
+  			productWeight:'4g',
+  			keyWords:'根根分明，栩栩如"真"',
+  			img:'hotproduct10113.jpg'
   		},
   		{
-  			productName:'绿茶新肌洁颜油4',
-  			productPrice:725,
-  			productWeight:'450ml',
-  			keyWords:'抗氧化 焕亮肌肤',
-  			img:'hotproductSHU2015092301.jpg'
+  			productName:'无色限柔雾唇膏',
+  			productPrice:215,
+  			productWeight:'3.4g',
+  			keyWords:'雾面哑光 持久显色',
+  			img:'hotproductSHU2013011601.jpg'
   		},
   		{
-  			productName:'绿茶新肌洁颜油5',
-  			productPrice:725,
-  			productWeight:'450ml',
-  			keyWords:'抗氧化 焕亮肌肤',
-  			img:'hotproductSHU2015092301.jpg'
+  			productName:'毛孔柔焦泡沫CC隔离液',
+  			productPrice:390,
+  			productWeight:'50g',
+  			keyWords:'轻盈柔焦 隐形毛孔',
+  			img:'hotproductSHU2013012201.jpg'
   		},
   		{
-  			productName:'绿茶新肌洁颜油6',
-  			productPrice:725,
-  			productWeight:'450ml',
-  			keyWords:'抗氧化 焕亮肌肤',
-  			img:'hotproductSHU2015092301.jpg'
+  			productName:'如胶似漆眼线笔',
+  			productPrice:250,
+  			productWeight:'0.12g',
+  			keyWords:'胶装质地 一笔成型',
+  			img:'hotproductSHU2013071101.webp'
   		},
   		{
-  			productName:'绿茶新肌洁颜油7',
-  			productPrice:725,
-  			productWeight:'450ml',
-  			keyWords:'抗氧化 焕亮肌肤',
-  			img:'hotproductSHU2015092301.jpg'
+  			productName:'小灯泡塑颜光感粉底液',
+  			productPrice:485,
+  			productWeight:'27ml',
+  			keyWords:'光感无暇 轻松上妆',
+  			img:'hotproductSHU2013090401.webp'
   		},
   		{
-  			productName:'绿茶新肌洁颜油8',
-  			productPrice:725,
+  			productName:'琥珀臻萃洁颜油',
+  			productPrice:870,
   			productWeight:'450ml',
-  			keyWords:'抗氧化 焕亮肌肤',
-  			img:'hotproductSHU2015092301.jpg'
+  			keyWords:'臻萃精油 8重功效',
+  			img:'hotproductshu2015121502.jpg'
   		},
   		{
-  			productName:'绿茶新肌洁颜油9',
-  			productPrice:725,
+  			productName:'樱花轻肤洁颜油',
+  			productPrice:685,
   			productWeight:'450ml',
-  			keyWords:'抗氧化 焕亮肌肤',
-  			img:'hotproductSHU2015092301.jpg'
+  			keyWords:'洗净油光 紧致毛孔',
+  			img:'hotproductCSSH028.jpg'
   		},
   		{
-  			productName:'绿茶新肌洁颜油10',
-  			productPrice:725,
-  			productWeight:'450ml',
-  			keyWords:'抗氧化 焕亮肌肤',
-  			img:'hotproductSHU2015092301.jpg'
+  			productName:'专业睫毛夹',
+  			productPrice:180,
+  			productWeight:'',
+  			keyWords:'柔软胶垫 自然卷翘肤',
+  			img:'hotproduct10062.jpg'
   		},
   		]
   	}

@@ -27,7 +27,7 @@
    				|
    			</li>
    			<li class="register" v-if='nickName'>
-   				<a href="">
+   				<a @click='turntoPage'>
    					个人中心
    				</a>
    			</li>
@@ -49,9 +49,9 @@
    				<span class="shoppingbag">
    					<img src="./../../static/img/index/shopping-bag.jpg" height="14" width="13">
    				</span>
-   				<a href="">
-   					我的购物袋 （ {{ shoppingBag }} ）
-   				</a>
+          <router-link to='/shopCart'>
+            我的购物袋 （ {{ shoppingBag }} ）
+          </router-link>
    			</li>
 
    		</ul>
@@ -79,6 +79,9 @@ export default {
   		this.$emit('log-on');
   	},
 
+    turntoPage(){
+      this.$router.push({path:'/myaccount'});
+    },
   	//检查是否登录
   	checkLogin(){
       axios.post('/users/checkLogin').then((response)=>{
@@ -99,6 +102,7 @@ export default {
     		if(res.status == '0'){
     			console.log(res.result);
     			this.$store.commit('updateUserInfo',res.result)
+          location.reload();
     			console.log(res.msg);
     		}else{
     			console.log(res.msg);
@@ -106,6 +110,7 @@ export default {
     	})
     }
   },
+  
   mounted:function(){
   	this.checkLogin();
   },

@@ -3,8 +3,8 @@
       <ul>
         <li>
           <router-link to="/" class="new">
-          <!--  <img src="../assets/images/menugif.png" alt="">
-           <img class="img" src="../assets/images/dropimg20170511.jpg" alt=""> -->
+           <img src="./../../static/img/Tab/menugif.png" height="68" width="217" alt="">
+           <img class="img" src="./../../static/img/Tab/dropimg20170511.jpg" height="180" width="180" alt="">
           </router-link>
         </li>
     
@@ -109,8 +109,8 @@
              </div>
              </div>
              <div class="second-img">
-               <!--  <img src="../assets/images/20131227-nav-01.jpg" alt="">
-               <img src="../assets/images/20150511-nav-01.jpg" alt=""> -->
+                <img src="./../../static/img/Tab/20131227-nav-01.jpg" alt="">
+               <img src="./../../static/img/Tab/20150511-nav-01.jpg" alt="">
                
              </div>
            </div> 
@@ -175,8 +175,8 @@
               </div>
               </div>
               <div class="second-img">
-               <!--  <img src="../assets/images/dropdonw14080701.jpg" alt="">
-                <img src="../assets/images/dropdonw2015091001.jpg" alt=""> -->
+                <img src="./../../static/img/Tab/dropdonw14080701.jpg" alt="">
+                <img src="./../../static/img/Tab/dropdonw2015091001.jpg" alt="">
               </div>
            </div>
         </li>
@@ -220,8 +220,8 @@
              
             </div>
              <div class="second-img">
-                 <!--  <img src="../assets/images/20120328-nav-04.jpg" alt="">
-                  <img src="../assets/images/20130418-nav-03.jpg" alt=""> -->
+                  <img src="./../../static/img/Tab/20120328-nav-04.jpg" alt="">
+                  <img src="./../../static/img/Tab/20130418-nav-03.jpg" alt="">
               </div>
           </div>
         </li>
@@ -233,7 +233,7 @@
         </li>
         <li class="last">
           <input type="text" value="柔雾唇膏">
-         <!--  <img src="../../static/images/search-btn.png" alt=""> -->
+          <img src="./../../static/img/Tab/search-btn.png" alt="">
         </li>
      </ul>
   </div>
@@ -342,7 +342,7 @@ ul {
   font-size: 16px;
   height: 68px;
   position: relative;
-  z-index: 12;
+  z-index: 2;
 }
 #nav>ul>li {
   float: left;
@@ -447,7 +447,7 @@ input{
   text-decoration: underline;
 }
 .li{
-  background: url("../../static/images/nav-dropdown-dot.gif") no-repeat  0px 13px;
+  /*background: url("../../static/images/nav-dropdown-dot.gif") no-repeat  0px 13px;*/
   padding-left: 20px;
 }
 .co{

@@ -2,7 +2,7 @@
   <div id="app">
     <last-news></last-news>
     <my-header @log-on='login'></my-header>
-   <!--  <tab></tab> -->
+    <tab></tab>
     <router-view></router-view>
     <my-footer></my-footer>
 
@@ -40,7 +40,7 @@ import './common/css/normalize.css'
 // import './common/css/common.css'
 import LastNews from './components/LastNews.vue'
 import MyHeader from './components/MyHeader.vue'
-// import Tab from './components/Tab.vue'
+import Tab from './components/Tab.vue'
 import LogForm from './components/LogForm.vue'
 import MyFooter from './components/MyFooter.vue'
 import MadolBox from './components/ModalBox.vue'
@@ -58,7 +58,7 @@ export default {
 
   components:{
     MyHeader,
-    // Tab,
+    Tab,
     LastNews,
     LogForm,
     MyFooter,

@@ -59,7 +59,6 @@ export default {
       var reg = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/;
       if(reg.test(this.email)){
         this.emalErrorText = false;
-        this.$store
       }else{
         this.emalErrorText = true;
       }

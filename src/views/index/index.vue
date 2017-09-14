@@ -1,16 +1,16 @@
 <template>
   <div class="index">
     <!-- 轮播图组件 -->
-    <!-- <my-carousel></my-carousel> -->
+    <my-carousel></my-carousel>
     <div class="promotion-banner">
       <a href="">
-        <img src="./../../static/img/index/promotion-banner-try.jpg">  
+        <img src="./../../../static/img/index/promotion-banner-try.jpg">  
       </a>
       <a href="">
-        <img src="./../../static/img/index/promotion-banner-new.jpg">
+        <img src="./../../../static/img/index/promotion-banner-new.jpg">
       </a>
       <a href="">
-        <img src="./../../static/img/index/promotion-banner-gift.jpg" class="last-img">
+        <img src="./../../../static/img/index/promotion-banner-gift.jpg" class="last-img">
       </a>
     </div>
 
@@ -19,13 +19,13 @@
 
     <div class="promotion-banner promotion-banner-bottom">
       <a href="">
-        <img src="./../../static/img/index/promotion-bannerStory.jpg">  
+        <img src="./../../../static/img/index/promotion-bannerStory.jpg">  
       </a>
       <a href="">
-        <img src="./../../static/img/index/promotion-bannerLook.jpg">
+        <img src="./../../../static/img/index/promotion-bannerLook.jpg">
       </a>
       <a href="">
-        <img src="./../../static/img/index/promotion-bannerLove.jpg" class="last-img">
+        <img src="./../../../static/img/index/promotion-bannerLove.jpg" class="last-img">
       </a>
     </div>
 
@@ -55,7 +55,7 @@
               <span>精细眉妆定制服务</span>
             </li>
             <li>
-             <img src="./../../static/img/index/brows-scanqrcode.jpg">
+             <img src="./../../../static/img/index/brows-scanqrcode.jpg">
             </li>
           </ul>
          
@@ -66,8 +66,8 @@
 </template>
 
 <script>
-// import MyCarousel from './../components/MyCarousel.vue'
-import StarProduct from './../components/StarProduct.vue'
+import MyCarousel from './../../components/MyCarousel/MyCarousel.vue'
+import StarProduct from './../../components/StarProduct.vue'
 export default {
   name: 'index',
   data () {
@@ -77,7 +77,7 @@ export default {
     }
   },
   components:{
-    // MyCarousel,
+    MyCarousel,
     StarProduct
   }
 }

@@ -2,7 +2,7 @@
 	<div class="container">
 		<div class="image">
 			<a href="#/11">
-				<img :src="images[index].src" alt="">
+				<img :src="'statci/src'+images[index].src" alt="">
 			</a>
 		</div>
 
@@ -21,32 +21,32 @@
 				index:0,
 				images:[
 					{
-						src:"../../static/images/2017062001kv.jpg",
+						src:"/users/ZXIAOH15/Documents/Github/shuuemura/src/views/index/MyCarousel/img/2017062001kv.jpg",
 						url:"##"
 					},
 					{
-						src:"../../static/images/2017062004kv.jpg",
+						src:"/users/ZXIAOH15/Documents/Github/shuuemura/src/views/index/MyCarousel/img/2017062004kv.jpg",
 						url:"##"
 					},
-					{
-						src:"../../static/images/2017062901kv.webp",
-					},
-					{
-						src:"../../static/images/2017062902kv.jpg",
-						url:"##"
-					},
-					{
-						src:"../../static/images/2017071202kv.jpg",
-						url:"##"
-					},
-					{
-						src:"../../static/images/2017081501KV.webp",
-						url:"##"
-					},
-					{
-						src:"../../static/images/2017062801kv.jpg",
-						url:"##"
-					}
+					// {
+					// 	src:"./img/2017062901kv.webp",
+					// },
+					// {
+					// 	src:"./img/images/2017062902kv.jpg",
+					// 	url:"##"
+					// },
+					// {
+					// 	src:"./img/images/2017071202kv.jpg",
+					// 	url:"##"
+					// },
+					// {
+					// 	src:"./img/images/2017081501KV.webp",
+					// 	url:"##"
+					// },
+					// {
+					// 	src:require("./img/images/2017062801kv.jpg"),
+					// 	url:"##"
+					// }
 				]
 			}
 		},

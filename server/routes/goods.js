@@ -18,15 +18,11 @@ var fs= require("fs");
 //获取时间模块
 var sd = require("silly-datetime");
 
-
-
-
 var Goods = require("../models/goods")
 
 var User = require("../models/user.js")
 
 var Temp = require("../models/temp-cart-list.js")
-
 
 //连接数据库
 mongoose.connect("mongodb://localhost:27017/shuuemuraMall");
@@ -43,7 +39,6 @@ mongoose.connection.on("err",()=>{
 mongoose.connection.on("disconnected",()=>{
 	console.log("MongoDB connect disconnected")
 });
-
 
 //默认就是从/goods开始
 router.get("/",function(req,res,next){
@@ -67,7 +62,6 @@ router.get("/",function(req,res,next){
 		}
 
 	})
-	
 });
 
 //商品详情页加载商品信息接口
@@ -75,17 +69,13 @@ router.get('/itemDetail',(req,res,next)=>{
 	var parma = {'ModeCode': req.query.modelCode}
 	Goods.findOne(parma,(err,doc)=>{
 		if(err){
-			res.json({
-				status:'3',
-				msg: err.message
-			})
+			throw err
 		}else{
 			if(doc){
 				res.json({
 					status: '0',
 					result: doc
 				})
-
 			}
 		}
 	})
@@ -99,6 +89,9 @@ router.post('/addComment',(req,res,next)=>{
 	var itemComment = req.body.commentContent
 	var modelCode = req.body.modelCode
 	var isAnonymous = req.body.isAnonymous
+	var rate = req.body.rate
+	//创建时间
+	var date = sd.format(new Date(), 'YYYYMMDDHHmm');
 	//step1:先找到用户
 	User.findOne({'userID':userID},(err,userDoc)=>{
 	//查找出错
@@ -113,11 +106,11 @@ router.post('/addComment',(req,res,next)=>{
 	//创建用户的评论数据
 		var comment = {
 			'userID': userID,
-			'date': '2017-9-11',
+			'date': date,
 			'isAnonymous': isAnonymous,
 			'comment': itemComment,
-			'rate': 5
-				}
+			'rate': rate
+		}
 	//在商品库内查找商品
 		Goods.findOne({'ModeCode':modelCode},(err,doc)=>{
 	//查找出错
@@ -140,16 +133,10 @@ router.post('/addComment',(req,res,next)=>{
 					}
 				})
 			}
-						
-
-
-					}
-				
-			})
-			
-		}
-
-		}
+		}			
+	})		
+}
+	}
 	})
 	}else{
 		res.json({
@@ -157,48 +144,137 @@ router.post('/addComment',(req,res,next)=>{
 			msg: '请先登录(from 评论接口)'
 		})
 	}
-
-
 })
 
 //上传图片接口
 router.post('/uploadImg',(req,res,next)=>{
 	var form = new formidable.IncomingForm();
-	// form.uploadDir = "./file";
+	//开启上传多张图片属性
+	form.multiples = true;
+	//设置存放的位置
 	form.uploadDir = "/users/ZXIAOH15/Documents/Github/shuuemura/server/uploadfile";
 	form.parse(req,(err,fields,files)=>{
         if(err){
             throw err;
-        }else{
-        	var oldPath = path.join(files.file.path);
-     		//获取图片的后缀名
-        	var extname = path.extname(files.file.name);
-        	//设置随机数(为图片编号做准备)
-        	var ran = Math.floor(Math.random()*10000 + 8999);
-        	//获取当前时间
-        	var time = sd.format(new Date(), 'YYYYMMDDHHmm');
+        }
+        else{
+        	console.log(files);
+        	//只要判定files.file中的属性存不存在就可以判断它是属于多个上传还是单个上传
+        	if(files.file.name){
+        		//获取图片的后缀名
+        		var extname = path.extname(files.file.name);
+        		//设置随机数(为图片编号做准备)
+        		var ran = Math.floor(Math.random()*10000 + 8999);
+        		//获取当前时间
+        		var time = sd.format(new Date(), 'YYYYMMDDHHmm');
+        		var oldPath = path.join(files.file.path);
+        		var newName = time + ran + extname;
+  				var newPath = path.join(__dirname, '../../static/uploadfile',newName);
+  				fs.rename(oldPath,newPath,(err)=>{
+  					if(err){
+  						throw err
+  					}else{
+  						res.json({
+        				status: '0',
+        				msg:'上传单张图片成功'
+        		})
 
-        	var newName = time + ran + extname;
-        	
-  			var newPath = path.join(__dirname, '../../static/uploadfile',newName) ;
-  			console.log(newName)  
-  			fs.rename(oldPath,newPath,(err)=>{
+  					}
+  				})        		
+        	}
+        	else
+        	{
+        	//设置计数器
+        	var num = 0;
+        	//设置图片数组长度
+			var length = files.file.length;
+			//获取当前时间
+        	var time = sd.format(new Date(), 'YYYYMMDDHHmm');
+			files.file.forEach((item,index)=>{
+				//获取图片的后缀名
+        		var extname = path.extname(item.name);
+        		//设置随机数(为图片编号做准备)
+        		var ran = Math.floor(Math.random()*10000 + 8999);
+        		//获取图片路径
+        		var oldPath = path.join(item.path);
+        		var newName = time + ran + extname;
+  				var newPath = path.join(__dirname, '../../static/uploadfile',newName);  
+  				fs.rename(oldPath,newPath,(err)=>{
   				if(err){
   					throw err
   				}else{
-  					res.json({
-        			status: '0',
-        			msg: '上传成功',
-        	})
+  					num++;
+  					if(num == length){
+  						res.json({
+        					status: '0',
+        					msg: '上传多张图片成功',
+        				})
+  					}
+  					
+  					}
+  				})    	
+        		
+        		})
 
-  				}
-  			} )
+        	}
+
         	
-        }
+        	}
+		})
+	})
 
-})
 
-})
+	//设置商品浏览记录接口
+	router.get('/browseHistory',(req,res)=>{
+		var firstFlag = false;
+		var modelCode = req.query.modelCode;
+		var itemCookie = req.cookies.itemCookie;
+		if(!itemCookie){
+			itemCookie = [modelCode]
+			firstFlag = true;
+		}else{
+			itemCookie = itemCookie.split('-');
+			var isUnique = true;
+			itemCookie.forEach((item)=>{
+				if(item == modelCode){
+					isUnique = false ; 
+				}
+			});
+		}
+		if(firstFlag ){
+			itemCookieString = itemCookie.join('-');
+			res.cookie("itemCookie",itemCookieString,{maxAge:1000*60*60});
+			res.json({
+				status:'0',
+				msg:'设置成功'
+			})
+		}else{
+			if(isUnique){
+				if(itemCookie.length >= 4){
+					itemCookie.shift();
+					itemCookie.push(modelCode);
+				}else{
+					itemCookie.push(modelCode);
+				}
+				itemCookieString = itemCookie.join('-');
+				res.cookie("itemCookie",itemCookieString,{maxAge:1000*60*60});
+				res.json({
+					status:'0',
+					msg:'设置成功'
+				})
+			}else{
+				res.json({
+				status:'1',
+				msg:'重复的cookie'
+			})
+
+			}
+
+			
+		}
+
+		
+	})
 
 
 
@@ -232,11 +308,11 @@ router.post('/uploadImg',(req,res,next)=>{
 // 					})
 // 				}
 
-// 				User.update({userID:userId},{$set:{cartList:tempArr}},function(err,result){
-// 					if(result){
-// 						res.status(200).json({status:0,msg:"success",result:result})
-// 					}
-// 				})
+				// User.update({userID:userId},{$set:{cartList:tempArr}},function(err,result){
+				// 	if(result){
+				// 		res.status(200).json({status:0,msg:"success",result:result})
+				// 	}
+				// })
 
 			
 		
