@@ -8,6 +8,8 @@ import Profileindex from './../views/myaccount/Profileindex.vue'
 import MyProfile from './../views/myaccount/MyProfile.vue'
 import OrderHistory from './../views/myaccount/OrderHistory.vue'
 import Subscription from './../views/myaccount/Subscription.vue'
+import ShopCart from './../views/shopCart/shopCart.vue'
+import Address from './../views/address/address.vue'
 
 Vue.use(Router)
 
@@ -24,6 +26,14 @@ export default new Router({
     {
           path:'/welcome',
           component: Welcome
+    },
+    {
+          path:'/shopCart',
+          component:ShopCart
+    },
+    {
+          path:'/address',
+          component:Address
     },
     {
           path:'/myaccount',

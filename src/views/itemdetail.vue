@@ -576,7 +576,7 @@ export default {
 				})
 				newArray.forEach((item)=>{
 					if(item[0]==" itemCookie"){
-						newArray3 = item[1].split('-');
+						newArray3 = item[1].split('-').rever;
 					}
 				})
 				console.log(newArray3);

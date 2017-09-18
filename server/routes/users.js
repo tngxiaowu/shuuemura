@@ -241,6 +241,35 @@ router.post('/getAddressList',(req,res,next)=>{
 })
 
 
+//用户购物车加载
+router.post('/getCartList',(req,res,next)=>{
+	var parma = {'userID':req.body.userID}
+	console.log(parma);
+	User.findOne(parma,(err,userDoc)=>{
+		if(err){
+			throw err;
+		}else{
+			console.log(userDoc);
+			if(userDoc == null){
+				res.json({
+					status: '1',
+					msg:'找到用户为空',
+					result: userDoc
+				})
+			}
+			if(userDoc){
+				res.json({
+					status: '0',
+					msg:'查找成功',
+					result: userDoc.cartList
+				})
+			}
+		}
+	})
+
+})
+
+
 
 
 
