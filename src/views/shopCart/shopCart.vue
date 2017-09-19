@@ -396,13 +396,7 @@ import modal from "./modal"
 			
 			},
 			dele(id){
-                var user = this.getCookie("userID");
-				axios.get("/delete",{
-					params:{
-						index:id,
-						userID:user
-					}
-				}).then((response)=>{
+				axios.post("/users/deleteItem",{index:id}).then((response)=>{
 				    var res=response.data;
 					if(res.status=="0"){
 						console.log(res.msg)

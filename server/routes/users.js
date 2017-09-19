@@ -5,6 +5,9 @@ var router = express.Router();
 //获取数据结构
 var User = require("./../models/user.js")
 
+//获取时间模块
+var sd = require("silly-datetime");
+
 
 //登录接口
 router.post('/login', (req, res, next)=>{
@@ -268,6 +271,222 @@ router.post('/getCartList',(req,res,next)=>{
 	})
 
 })
+
+//用户删除购物车内商品
+router.post('/deleteItem',(req,res,next)=>{
+	var userID = req.cookies.userId;
+	var index = req.body.index;
+	User.findOne({'userID':userID},(err,userDoc)=>{
+		if(err){
+			throw err
+		}else{
+			if(userDoc == null){
+				res.json({
+					status:'0',
+					msg:'找不到用户'
+				})
+			}
+
+			if(userDoc){
+				userDoc.cartList.splice(index,1)
+				userDoc.save((err,doc)=>{
+					if(err){
+						throw err
+					}else{
+						res.json({
+							status:'0',
+							msg:'删成购物车商品成功'
+						})
+					}
+				})
+				
+				}
+
+			}
+
+			
+		})
+	})
+
+
+
+
+
+
+
+//地址列表加载
+router.post('/getAddressList',(req,res,next)=>{
+	var userID = req.cookies.userId;
+
+	User.findOne({'userID':userID},(err,userDoc)=>{
+		if(err){
+			throw err
+		}else{
+			if(userDoc == null){
+				res.json({
+					status:'0',
+					msg:'找不到用户'
+				})
+			}
+
+			if(userDoc){
+				es.json({
+				status:'0',
+				result: userDoc.adressList
+			})
+
+			}
+
+			r
+		}
+	})
+
+})
+
+//用户地址添加
+router.post('/addAddress',(req,res,next)=>{
+	//获取用户ID
+	var userID = req.cookies.userId;
+	//定义创建时间
+	var time1 = sd.format(new Date(), 'YYYYMMDDHHmm');
+	//定义创建Id编号：
+	var ran1 = Math.floor(Math.random()*8999+1000)
+	var ran2 = Math.floor(Math.random()*8999+1000)
+	var time2 = sd.format(new Date(), 'YYYYMMDDHHmm');
+	var addressId = ran1 + '' + time2 + ran2  ;
+
+	//获取新的地址
+	var newAddress = {
+		addressShortcut: req.body.addressShortcut, 
+		addressee: req.body.addressee,
+		detailAddress: req.body.detailAddress,
+		telPhone: req.body.telPhone,
+		province:req.body.province,
+        city: req.body.city,
+        postCode: req.body.postCode,
+        default:false,
+        createDate: time1,
+        addressId:addressId
+	}
+	//判断用户是否登录
+	//用户已经登录
+	if(userID){
+		User.findOne({'userID': userID},(err,userDoc)=>{
+			if(err){
+				throw err
+			}else{
+				if(userDoc == null){
+					res.json({
+						status:'0',
+						msg:'找不到用户'
+					})
+				}
+			//找到用户
+			//用户地址列表内没有内容
+			if(userDoc.adressList.length <= 0){
+				console.log('找到用户',userDoc);
+				console.log('用户地址为空')
+					userDoc.adressList.push(newAddress)
+						userDoc.save((err,doc)=>{
+							if(err){
+								throw err
+							}else{
+								if(doc){
+									res.json({
+										status:'0',
+										msg:'添加地址成功'
+							})
+									
+						}
+					}
+				})
+			}
+			//用户地址列表内有内容
+			else{
+					//两个对象之间的比较
+					var isUnique = true;
+					//如果输入的对象重复
+					userDoc.adressList.forEach((item)=>{
+						if(JSON.stringify(item) == JSON.stringify(newAddress)){
+							isUnique = false;
+							res.json({
+								status:'0',
+								msg:'重复地址'
+							})
+						}
+					})
+					//如果输入的对象不重复
+					if(isUnique){
+						userDoc.adressList.push(newAddress)
+						userDoc.save((err,doc)=>{
+							if(err){
+								throw err
+							}else{
+								if(doc){
+									res.json({
+										status:'0',
+										msg:'添加地址成功'
+									})
+								}
+							}
+						})
+					}
+				}
+			}
+		})
+	}
+	//用户未登录
+	else{
+		res.json({
+			status:'1',
+			msg:'用户未登录'
+		})
+	}
+
+})
+
+//删除地址
+router.post('/deleteAddress',(req,res,next)=>{
+	//获取用户ID
+	var userID = req.cookies.userId;
+	// console.log(userID);
+	// //获取订单号
+	// var addressId = req.body.addressId;
+	// var addressId = addressId.toString();
+	// console.log(addressId);
+	var index = req.body.index;
+
+	User.findOne({'userID': userID},(err,userDoc)=>{
+		if(err){
+			throw err
+		}
+		else{
+			if(userDoc == null){
+				res.json({
+					status:'0',
+					msg: '找到用户为空'
+				})
+			}
+
+			if(userDoc){
+				userDoc.adressList.splice(index,1)
+				userDoc.save((err,doc)=>{
+					if(err){
+						throw err
+					}else{
+						res.json({
+							status:'0',
+							msg:'终于删成功了'
+						})
+					}
+				})
+				
+			}
+		}
+	})
+})
+
+
 
 
 

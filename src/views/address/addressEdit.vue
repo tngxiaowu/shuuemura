@@ -4,19 +4,19 @@
   		<ul>
   			<li>
   				<label>地址名称:</label>
-  				<input type="" name="">
+  				<input type="" name="" placeholder="例：家庭地址" v-model='addressShortcut'>
   			</li>
   			<li>
   				<label>姓名:</label>
-  				<input type="" name="">
+  				<input type="" name="" v-model='addressee'>
   			</li>
   			<li>
   				<label>手机号码:</label>
-  				<input type="" name="">
+  				<input type="" name="" v-model='telPhone'>
   			</li>
   			<li>
   				<label>详细地址:</label>
-  				<input type="" name="">
+  				<input type="" name="" v-model='detailAddress'>
   			</li>
   		</ul>
   		
@@ -52,24 +52,29 @@
   				<input type="" name="">
   			</li>
   		</ul>
-  		
   	</div>
- 
+    <div>
+      <button @click='cancelEdit()'>取消修改</button>
+      <button @click='addAddress()' >保存地址</button>
+    </div>
   </div>
 </template>
 
 <script>
-
+import axios from 'axios'
 export default {
 	data(){
 		return{
 			show:true,
-			province:[{Name:'上海',city:['市区','郊区']},{Name:'北京',city:['内环','外环']}],
+      province:'',
+      addressShortcut:'',
+      addressee:'',
+      telPhone:'',
+      detailAddress:'',
 		}
 	},
 	computed:{
 		city(){
-			return this.Province.forEach
 		}
 	},
   	components:{
@@ -78,7 +83,27 @@ export default {
   	methods:{
   		close(){
   			this.$emit("close");
-  		}
+  		},
+      addAddress(){
+        axios.post('/users/addAddress',{
+          addressShortcut: this.addressShortcut, 
+          addressee: this.addressee, 
+          detailAddress: this.detailAddress,
+          telPhone: this.telPhone,
+          province:'上海',
+          city:'郊区',
+          postCode: 201516
+        }).then((response)=>{
+          var res = response.data;
+          if(res.status == '0'){
+            console.log(res.msg);
+            this.$emit('add-adress-suc')
+          }
+        })
+      },
+      cancelEdit(){
+        this.$emit('add-adress-suc')
+      }
   	}
 }
 </script>
@@ -94,6 +119,7 @@ export default {
 	.address-l{
 		float: left;
 		width: 292px;
+    height: 180px;
 	}
 
 	ul li{

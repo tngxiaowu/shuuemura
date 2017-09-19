@@ -1,36 +1,5 @@
 <template>
 <div class="shopcar">
-	
-	<modal v-if="itemone" @close="changeModal">
-		<div slot="main" class="change">
-			<div class="item-img">
-				<img :src="`./../../../static/img/shopcar/${itemone.ModeChangeImg}`" alt="">
-				<router-link  to="/" class="more">查看更多</router-link>
-			</div>
-			<div class="text">
-				<p>{{itemone.ModelChName}}</p>
-				<h3>{{itemone.ModelOriginPrice}}</h3>
-				<p>{{itemone.ModelDescripition}}</p>
-				<p>{{itemone.ModelComposition}}</p>
-				<div class="modal-option">
-					<div>
-						<span>颜色</span>
-						<select class="select-modal" v-model="defaultStandard">
-							<option v-for="items in itemone.item" :value="items.itemStandard">{{items.itemStandard}}</option>
-						</select>
-					</div>
-					<div>
-						<span>数量</span>
-						<select class="select-modal" v-model="defaultNumber">
-							<option v-for="val in options" :value="val.value">{{val.value}}</option>
-						</select>
-					</div>
-					<div class="save-change-modal" @click="saveModal(itemone.id)">		
-					</div>
-				</div>
-			</div>
-		</div>
-	</modal>
 	<!-- header -->
    	<div class="header">
 		<div class="headwrap">
@@ -67,10 +36,6 @@
 			<div class="mainContent">
 				<table class="productList">
 					<tr class="list" v-for="(item,index) in list">
-						
-						
-						
-						
 					</tr>
 				</table>
 			</div>
@@ -82,7 +47,26 @@
 								<div class="tpay">送货信息</div>
 							</div>
 							<div class="radioGroup">
-								<address-edit></address-edit>
+								<table>
+									<tbody>
+										<tr v-for='(item,index) in addressList'>
+											<td><input type="radio" name="addresslist" v-model='checkedAddress'
+											:value='item.addressId'
+												></td>
+											<td> {{ item.addressShortcut }} </td>
+											<td> {{ item.addressee }} </td>
+											<td> {{ item.province }} </td>
+											<td> {{ item.city }} </td>
+											<td> {{ item.detailAddress }} </td>
+											<td> {{ item.postCode }} </td>
+											<td> {{ item.telPhone }} </td>
+											<td> <span @click='editAddress(index)'>修改</span> </td>
+											<td> <span @click='openModalBox(index)'>删除</span> </td>
+										</tr>
+									</tbody>
+								</table>
+								<address-edit @add-adress-suc='closeAddressEdit'   v-if='showAddressEdit'></address-edit>
+								<button @click='addNewAddress()'>添加新的地址</button>
 							</div>
 						</div>
 					</div>
@@ -133,6 +117,8 @@
 					</div>
 				</div>
 			</div>
+		
+
 			<div class="aside">
 				<div class="asidebox asidebottom">
 					<div class="shophelp">
@@ -197,6 +183,14 @@
 			</div>
 		</div>
    	</div>
+
+   	<!-- 删除模态框 -->
+	<modal v-if="showDeleetBox" @close="changeModal">
+		<div slot="main" class="change">
+			<p>确认是否删除？</p>
+			<button @click = 'deleteAddress()'>确定</button><button @click='showDeleetBox=false' >取消</button>
+		</div>
+	</modal>
 </div>
 </template>
 
@@ -210,32 +204,18 @@ import AddressEdit from './addressEdit.vue'
 	  		modal
 	  	},
 	  	computed:{
-	  		relatedItem(){
-	  			console.log("relateditem")
-	  			if(itemone){
-	  				var _this=this;
-		  			return this.itemone.item.filter((item)=>{
-		  				return item.itemStandard==_this.defaultStandard;
-		  			})
-	  			}
-	  		},
-	  		ProductTotal(){
-	  			var price = 0;
-	  			this.list.forEach((item)=>{
-	  				price += item.price* item.itemNumber;
-	  			})
-	  			return price;
-	  		},
-	  		AllPrice(){
-	  			return this.ProductTotal+this.freight - this.discount
-	  		}
 	  	},
 		data(){
 			return{
+				addressList:[],
+				showDeleetBox:false,
+				currentAddress:'',
+				checkedAddress:'',
 				itemValue:null,
 				defaultNumber:null,
 				defaultStandard:null,
 				showchange:false,
+				showAddressEdit:false,
 				itemone:null,
 				showmodal:false,	
 				totalPrice:[],
@@ -250,10 +230,9 @@ import AddressEdit from './addressEdit.vue'
 		},
 		methods:{
 			changeModal(){
-				this.itemone=null;
+				this.showDeleetBox = false;
 			},
 			saveModal(id){
-				console.log('id',id);
 				var Standard=this.defaultStandard;
 				var num=this.defaultNumber;
 				axios.get('/save',{
@@ -340,6 +319,7 @@ import AddressEdit from './addressEdit.vue'
 				})
 				this.Total=total;
 			},
+
 			setCookie: function (cname, cvalue, exdays) {
                 var d = new Date();
                 d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
@@ -365,29 +345,61 @@ import AddressEdit from './addressEdit.vue'
 
             },
 
-            //检查cookie
-            checkCookie: function () {
-                var user = this.getCookie("userID");
-                if (user != "") {
-                    // alert("Welcome again " + user);
-                } else {
-                    user = prompt("Please enter your name:", "");
-                    if (user != "" && user != null) {
-                        this.setCookie("userID",user, 365);
-                    }
-                }
+            closeAddressEdit(data){
+            	this.showAddressEdit = false;
+     			this.getAddressList();
+            },
+
+            addNewAddress(){
+            	this.showAddressEdit = true;
+            	this.getAddressList();
+
+            },
+            getAddressList(){
+            	axios.post('/users/getAddressList').then((response)=>{
+            		var res = response.data;
+            		if(res.status == '0'){
+            			this.addressList = res.result.adressList;
+            			//设置默认状态
+            			this.checkedAddress = this.addressList[0].addressId;
+
+            		}
+            	})
+            },
+            openModalBox(id){
+            	this.showDeleetBox = true;
+            	this.currentAddress = id;
+            
+            },
+            deleteAddress(){
+            	axios.post('/users/deleteAddress',{index: this.currentAddress}).then((response)=>{
+            		var res = response.data;
+            		if(res.status == '0'){
+            			this.showDeleetBox = false;
+            			this.getAddressList();
+
+            		}
+            	})
+            },
+
+            editAddress(id){
+            	this.showAddressEdit = true;
+            },
+
+            test(){
+
             }
 		},	
 		created(){
 			
 		},
 		mounted(){
-			// console.log(this.commodityListsId);
-			this.getCartList();
-			this.checkCookie();
+			this.getAddressList();
+
 		},
 		components:{
-			AddressEdit
+			AddressEdit,
+			modal
 		}
 
 	}
@@ -684,7 +696,6 @@ import AddressEdit from './addressEdit.vue'
 	}
 	.totalwrap .info_box {
 		height: 134px;
-		background: #F2F2F2;
 		margin-top: 20px;
 		margin-left: 10px;
 	}
