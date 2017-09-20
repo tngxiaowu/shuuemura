@@ -19,14 +19,14 @@ fastclick.attach(document.body)
 const store = new Vuex.Store({
 	state:{
 		nickName:'',
-		cartCount:''
+		cartCount:0
 	},
 	mutations:{
 		updateUserInfo(state,nickName){
 			state.nickName = nickName;
 		},
-		updateCartCount(state){
-			state.cartCount += cartCount;
+		updateCartCount(state,cartCount){
+			state.cartCount = cartCount;
 		}
 	}
 })

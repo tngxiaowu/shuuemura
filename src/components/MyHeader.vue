@@ -50,7 +50,7 @@
    					<img src="./../../static/img/index/shopping-bag.jpg" height="14" width="13">
    				</span>
           <router-link to='/shopCart'>
-            我的购物袋 （ {{ shoppingBag }} ）
+            我的购物袋 （ {{ cartCount }} ）
           </router-link>
    			</li>
 

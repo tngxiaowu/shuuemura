@@ -342,7 +342,10 @@ export default {
   			rateScore += item.rate;
   			})
   			return Math.floor((rateScore)/this.model.ModelComment.length)
-  		}
+  		},
+  		cartCount(){
+      		return this.$store.state.cartCount;  
+    	}
   },
   methods:{
   	//打开评论
@@ -392,6 +395,7 @@ export default {
   				this.sendItemCookie();
   				console.log(this.historyItem);
   				this.selectStandard = res.result.item[0].itemStandard;
+          this.$store.commit('updateCartCount',res.cartCount)
   			}
   		})
   	},
@@ -407,6 +411,7 @@ export default {
   				var res = response.data;
   					if(res.status == '0'){
   					console.log(res.msg);
+  					this.$store.commit('updateCartCount',res.cartCount)
   				}
   				else{
   					console.log(res.msg);
@@ -639,6 +644,7 @@ export default {
   				var res = response.data;
   				if(res.status == '0'){
   					this.historyItemModel = res.result;
+
   				}
   			})
 

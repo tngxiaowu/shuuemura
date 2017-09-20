@@ -67,15 +67,32 @@ router.get("/",function(req,res,next){
 //商品详情页加载商品信息接口
 router.get('/itemDetail',(req,res,next)=>{
 	var parma = {'ModeCode': req.query.modelCode}
+	var cartCount = null
 	Goods.findOne(parma,(err,doc)=>{
 		if(err){
 			throw err
 		}else{
 			if(doc){
-				res.json({
-					status: '0',
-					result: doc
+				User.findOne({'userID':req.cookies.userId},(err,userDoc)=>{
+					if(err){
+						throw err
+					}else{
+						if(userDoc){
+							console.log('userDoc是',userDoc);
+							userDoc.cartList.forEach((item)=>{
+								cartCount += item.itemNumber;
+							})
+
+						}
+
+						res.json({
+							status: '0',
+							result: doc,
+							cartCount:cartCount
+						})
+					}
 				})
+				
 			}
 		}
 	})
@@ -364,18 +381,24 @@ router.post('/addCart',(req,res,next)=>{
 							itemFlag = true;
 							item.itemNumber += parseInt(itemNumber);	
 							}	
-							tempArr.push(item)
 						}
+						tempArr.push(item)
 					})
-				//线路1：旧商品 旧困屎
+				//线路1：旧商品 旧款式
 				if(modeFlag&&itemFlag){
 					console.log('线路1:旧商品 旧款式')
 					User.update({userID:userId},{$set:{cartList:tempArr}},function(err,result){
 						if(result){
+							console.log(result);
+							var cartCount = null;
+							userDoc.cartList.forEach((item)=>{
+								cartCount +=  parseInt(item.itemNumber)
+							})
 							res.json({
 								status:0,
 								msg:"success",
-								result:result
+								result:result,
+								cartCount: cartCount
 							})
 						}
 					})
@@ -413,9 +436,14 @@ router.post('/addCart',(req,res,next)=>{
 											throw err;
 										}else{
 											if(doc){
+												var cartCount = null;
+												doc.cartList.forEach((item)=>{
+													cartCount +=  parseInt(item.itemNumber)
+												})
 												res.json({
 													status:'0',
-													result: doc
+													result: doc,
+													cartCount:cartCount
 												})
 											}
 										}
@@ -463,10 +491,15 @@ router.post('/addCart',(req,res,next)=>{
 											throw err;
 										}else{
 											if(doc){
+												var cartCount = null;
+												doc.cartList.forEach((item)=>{
+													cartCount +=  parseInt(item.itemNumber)
+												})
 												res.json({
 													status:'0',
 													result: doc,
-													msg:'旧商品，新规格添加成功'
+													msg:'旧商品，新规格添加成功',
+													cartCount:cartCount
 												})
 											}
 										}
