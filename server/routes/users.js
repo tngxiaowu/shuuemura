@@ -5,6 +5,9 @@ var router = express.Router();
 //获取数据结构
 var User = require("./../models/user.js")
 
+//获取商品结构
+var Goods = require("./../models/goods.js")
+
 //获取时间模块
 var sd = require("silly-datetime");
 
@@ -247,12 +250,10 @@ router.post('/getAddressList',(req,res,next)=>{
 //用户购物车加载
 router.post('/getCartList',(req,res,next)=>{
 	var parma = {'userID':req.body.userID}
-	console.log(parma);
 	User.findOne(parma,(err,userDoc)=>{
 		if(err){
 			throw err;
 		}else{
-			console.log(userDoc);
 			if(userDoc == null){
 				res.json({
 					status: '1',
@@ -286,7 +287,6 @@ router.post('/deleteItem',(req,res,next)=>{
 					msg:'找不到用户'
 				})
 			}
-
 			if(userDoc){
 				userDoc.cartList.splice(index,1)
 				userDoc.save((err,doc)=>{
@@ -308,10 +308,126 @@ router.post('/deleteItem',(req,res,next)=>{
 		})
 	})
 
+	
+	//用户修改购物车内的商品数量或款式
+	router.post('/editItem',(req,res,next)=>{
+		//从前端拿取各种参数
+		var itemIndex = null;
+		var userID = req.cookies.userId;
+		var ModeCode = req.body.ModeCode;
+		var itemStandard = req.body.itemStandard;
+		var itemNumber = req.body.itemNumber;
+		var currentIndex = req.body.currentIndex;
+		var isInCartList = false;
+		var notInCartList = false;
+		User.findOne({'userID':userID},(err,userDoc)=>{
+		if(err){
+			throw err
+		}
+		else{
+			if(userDoc == null){
+				res.json({
+						status:'0',
+						msg:'找不到用户'
+				})
+			}
+			
+			console.log('找到用户了么？')
+			
+			if(userDoc){
+				userDoc.cartList.forEach((item,index)=>{
+					//找到商品
+					if(item.ModeCode == ModeCode){
+						console.log('找到商品')
+					//找到规格	
+						if(item.itemStandard == itemStandard){
+							console.log('找到规格')
+							//表明是在购物车里
+							isInCartList = true;
+							itemIndex = index;
+							//判断index的值是否相等
+							if(currentIndex == itemIndex){
+								var newItem = item;
+								newItem.itemNumber = parseInt(itemNumber); 
+								userDoc.cartList.splice(currentIndex,1,newItem);
+								console.log('商品自我增减');
+								userDoc.save((err,doc)=>{
+									if(err){
+										throw err
+									}else{
+										res.json(
+											{
+												status:'0',
+												msg:'保存原版成功'
+											})
+										}
+									})
+								}
+								else{
+									console.log('合并相同购物车内的产品')
+									var newItem = item;
+									newItem.itemNumber += parseInt(itemNumber); 
+									console.log("newItem",newItem);
+									var newIndex = userDoc.cartList.indexOf(item);
+									userDoc.cartList.splice(newIndex,1,newItem);
+									userDoc.save((err,doc)=>{
+									if(err){
+										throw err
+									}
+									else{
+										doc.cartList.splice(currentIndex,1);
+										doc.save((err,doc)=>{
+											res.json({
+											status:'0',
+											msg:'保存修改版成功'
+										})
+										})
+									}
+								})				
+							}
+						}
+					}
+				})
 
-
-
-
+			//如果不在购物车内
+			if(!isInCartList){
+				console.log('情况3：修改的商品不在购物车内')
+				Goods.findOne({'ModeCode':ModeCode},(err,goodsDoc)=>{
+					if(err){
+						throw err;
+					}
+					else{
+						if(goodsDoc){
+							var newStandard = null;
+							goodsDoc.item.forEach((item)=>{
+								if(item.itemStandard == itemStandard){
+									newStandard = item;
+									newStandard.itemNumber = parseInt(itemNumber);
+								}
+							})
+							userDoc.cartList.splice(currentIndex,1,newStandard);
+							// userDoc.cartList.push();
+							userDoc.save((err,doc)=>{
+								if(err){
+									throw err
+								}
+								else{
+									if(doc){
+										res.json({
+											status:'0',
+											msg:'第三条路终于成功了'
+										})
+									}
+								}
+							})
+						}
+					}
+				})
+				}
+			}
+			}
+			})
+		})
 
 
 //地址列表加载
@@ -330,14 +446,11 @@ router.post('/getAddressList',(req,res,next)=>{
 			}
 
 			if(userDoc){
-				es.json({
+				res.json({
 				status:'0',
 				result: userDoc.adressList
 			})
-
 			}
-
-			r
 		}
 	})
 
@@ -485,14 +598,6 @@ router.post('/deleteAddress',(req,res,next)=>{
 		}
 	})
 })
-
-
-
-
-
-
-
-
 
 
 //漏写了这个一直报错

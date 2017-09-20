@@ -297,20 +297,7 @@ import AddressEdit from './addressEdit.vue'
 				this.item.index=id;
 				this.showmodal=true;
 			},
-			change(code,sta,num,id){
-				this.showchange=true;
-				this.defaultStandard=sta;
-				this.defaultNumber=num;
-				console.log(sta,num);
-				var _this=this;
-				axios.get(`/goods?ModeCode=${code}`).then((response)=>{
-					var res=response.data;
-					if(res.status="0"){
-							_this.itemone=res.msg[0];
-							_this.itemone.id=id;
-						}
-				})
-			},
+			
 			changeNumber(index,price,num){
 				this.totalPrice[index]=price*num;
 				var total=0;

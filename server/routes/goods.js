@@ -42,7 +42,7 @@ mongoose.connection.on("disconnected",()=>{
 
 //默认就是从/goods开始
 router.get("/",function(req,res,next){
-	var modeCode = parseInt(req.param("modeCode"));
+	var modeCode = parseInt(req.query.ModeCode);
 	console.log(modeCode);
 	Goods.find({'ModeCode': modeCode},(err,doc)=>{
 		if(err){
@@ -229,10 +229,14 @@ router.post('/uploadImg',(req,res,next)=>{
 		var firstFlag = false;
 		var modelCode = req.query.modelCode;
 		var itemCookie = req.cookies.itemCookie;
+		//判断是否存在cookie
+		//不存在 创建cookie"数组"
 		if(!itemCookie){
 			itemCookie = [modelCode]
 			firstFlag = true;
-		}else{
+		}
+		//存在 比较cookie内的编号是否存在于数组
+		else{
 			itemCookie = itemCookie.split('-');
 			var isUnique = true;
 			itemCookie.forEach((item)=>{
@@ -241,6 +245,9 @@ router.post('/uploadImg',(req,res,next)=>{
 				}
 			});
 		}
+
+
+		//第一次设置cookie
 		if(firstFlag ){
 			itemCookieString = itemCookie.join('-');
 			res.cookie("itemCookie",itemCookieString,{maxAge:1000*60*60});
@@ -263,9 +270,14 @@ router.post('/uploadImg',(req,res,next)=>{
 					msg:'设置成功'
 				})
 			}else{
-				res.json({
-				status:'1',
-				msg:'重复的cookie'
+					var currentIndex = itemCookie.indexOf(modelCode);
+					itemCookie.splice(currentIndex,1)
+					itemCookie.push(modelCode)
+					itemCookieString = itemCookie.join('-');
+					res.cookie("itemCookie",itemCookieString,{maxAge:1000*60*60});
+					res.json({
+					status:'1',
+					msg:'重复的cookie'
 			})
 
 			}	
@@ -274,43 +286,230 @@ router.post('/uploadImg',(req,res,next)=>{
 
 	//获取浏览历史记录商品
 	router.get('/getHistoryMode',(req,res,next)=>{
-		var item1 = req.query.item1
-		var item2 = req.query.item2
-		var item3 = req.query.item3
-		var item4 = req.query.item4
-		console.log(item1,item2,item3,item4);
-		res.json({
-			status: '0',
-			msg:'连接成功'
+		var parma = req.query;
+		var realLength = Object.keys(parma).length;
+		console.log(realLength);
+		var newArry = [];
+		for(var i = 1; i <= realLength; i++){
+			var obj = {};
+			obj.ModeCode =  parma['item'+i];
+			newArry.push(obj);
+		}
+		console.log('newArray是',newArry);
+		Goods.find({ $or:newArry},(err,doc)=>{
+			if(err){
+				throw err
+			}else{
+				if(doc){
+					doc.forEach((item1)=>{
+						newArry.forEach((item2)=>{
+							if(item1.ModeCode == item2.ModeCode){
+								item2.ModeCode = item1;
+							}
+						})
+					})
+					var newArry3 = [];  
+					newArry.forEach((item)=>{
+						newArry3.push(item.ModeCode) 
+					})
+
+					console.log('newArray3是',newArry3);
+
+					
+
+				}
+
+				res.json({
+					status: '0',
+					result:newArry3
 		})
+
+			}
+		})
+
+		
 	})
 
 
 
 
 //添加至购物车
+router.post('/addCart',(req,res,next)=>{
+	//判断用户是否登录
+	if(req.cookies.userId){
+		//拿到用户id 
+		let userId = req.cookies.userId;
+		//拿到商品id
+		let ModeCode = req.body.modelCode;
+		//拿到商品的规格
+		let itemStandard =  req.body.itemStandard;
+		//拿到商品的购买数量
+		let itemNumber = req.body.itemNumber;
+		let modeFlag = false;
+		let itemFlag = false;
+		let newItem = null;
+		User.findOne({'userID':userId},(err,userDoc)=>{
+			if(err){
+				throw err;
+			}else{
+				if(userDoc){
+					console.log('第一步：找到用户')
+					var tempArr = [];
+					userDoc.cartList.forEach((item)=>{
+					console.log('第二步:商品在购物车内')
+						if(item.ModeCode == ModeCode){
+							modeFlag = true;
+							if(item.itemStandard == itemStandard){
+							console.log('第三步:规格也在购物车内')
+							itemFlag = true;
+							item.itemNumber += parseInt(itemNumber);	
+							}	
+							tempArr.push(item)
+						}
+					})
+				//线路1：旧商品 旧困屎
+				if(modeFlag&&itemFlag){
+					console.log('线路1:旧商品 旧款式')
+					User.update({userID:userId},{$set:{cartList:tempArr}},function(err,result){
+						if(result){
+							res.json({
+								status:0,
+								msg:"success",
+								result:result
+							})
+						}
+					})
+				}
+
+				//线路2：新商品 新款式
+				if(!modeFlag){
+					console.log('线路2：新商品 新款式')
+					Goods.findOne({'ModeCode':ModeCode},(err,goodsDoc)=>{
+						if(err){
+							throw err
+						}else{
+							if(goodsDoc == null){
+								res.json({
+									status:'3',
+									msg:'找不到该款商品(393)'
+								})
+							}
+
+							if(goodsDoc){
+								var newItem = null;
+								goodsDoc.item.forEach((item)=>{
+									console.log('线路2：找到款式了')
+									if(item.itemStandard == itemStandard){
+							//初始化购物车内的商品
+									newItem = item;
+									newItem.itemNumber = itemNumber;
+									}
+								})
+
+								if(newItem){
+									userDoc.cartList.push(newItem);
+									userDoc.save((err,doc)=>{
+										if(err){
+											throw err;
+										}else{
+											if(doc){
+												res.json({
+													status:'0',
+													result: doc
+												})
+											}
+										}
+									})
+								}
+								else{
+									res.json({
+										status: '0',
+										msg: '找不到该商品款式(426)'
+									})
+								}
+							}//goodsDoc结束
+						}	
+					})
+				}
+				
+				//线路3 旧商品 新款式
+				if(modeFlag&&!itemFlag){
+					console.log('线路3：旧商品 新款式')
+					Goods.findOne({'ModeCode':ModeCode},(err,goodsDoc)=>{
+						if(err){
+							throw err
+						}else{
+							if(goodsDoc == null){
+								res.json({
+									status:'3',
+									msg:'找不到该款商品(393)'
+								})
+							}
+							if(goodsDoc){
+								var newItem = null;
+								goodsDoc.item.forEach((item)=>{
+									console.log('线路3：找到款式了')
+									if(item.itemStandard == itemStandard){
+							//初始化购物车内的商品
+									newItem = item;
+									newItem.itemNumber = itemNumber;
+									}
+								})
+
+								if(newItem){
+									userDoc.cartList.push(newItem);
+									userDoc.save((err,doc)=>{
+										if(err){
+											throw err;
+										}else{
+											if(doc){
+												res.json({
+													status:'0',
+													result: doc,
+													msg:'旧商品，新规格添加成功'
+												})
+											}
+										}
+									})
+								}
+								else{
+									res.json({
+										status: '0',
+										msg: '找不到该商品款式(479)'
+									})
+								}
+							}//goodsDoc结束
+						}	
+					})
+				}	
+			}// if(userDoc结束)
+		}	
+		})//userfindOne结束
+	}else{
+		res.json({
+			status:'0',
+			msg:'用户未登录'
+		})
+	}
+})
+
+
+
+
 // router.post('/addCart',(req,res,next)=>{
+// 	//用户是否登录
 // 	if(req.cookies.userId){
-// 		//拿到用户id 
-// 		let userId = req.cookies.userId;
-// 		//拿到商品id
-// 		let modelCode = req.body.modelCode;
-// 		console.log(modelCode);
-// 		//拿到商品的规格
-// 		let itemStandard =  req.body.itemStandard;
-// 		//拿到商品的购买数量
-// 		let itemNumber = req.body.itemNumber;
-// 		console.log(typeof itemNumber);
+		
 // 		//第一步：查找用户
 // 		console.log('第一步：查找用户')
 // 		User.findOne({'userID':userId},(err,userDoc)=>{
 // 			if(userDoc){
-// 				console.log(userDoc)
+// 				console.log('找到用户');
 // 				var tempArr = []
 
 // 				userDoc.cartList.forEach((item)=>{
 // 					if(item.ModeCode === modelCode && item.itemStandard === itemStandard){
-// 						item.itemNumber +=1
+						
 // 					}
 
 // 					tempArr.push(item)				
@@ -318,16 +517,11 @@ router.post('/uploadImg',(req,res,next)=>{
 // 					})
 // 				}
 
-				// User.update({userID:userId},{$set:{cartList:tempArr}},function(err,result){
-				// 	if(result){
-				// 		res.status(200).json({status:0,msg:"success",result:result})
-				// 	}
-				// })
-
-			
-		
-		
-			
+// 				User.update({userID:userId},{$set:{cartList:tempArr}},function(err,result){
+// 					if(result){
+// 						res.status(200).json({status:0,msg:"success",result:result})
+// 					}
+// 				})
 // 		})//User.findOne结束
 // 	}else{
 // 		if(req.cookies.offLineCart){

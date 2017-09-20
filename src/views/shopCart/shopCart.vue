@@ -34,7 +34,7 @@
 					<div>
 						<span>颜色</span>
 						<select class="select-modal" v-model="defaultStandard">
-							<option v-for="items in itemone.item" :value="items.itemStandard">{{items.itemStandard}}</option>
+							<option v-for="item in itemone.item" :value="item.itemStandard">{{item.itemStandard}}</option>
 						</select>
 					</div>
 					<div>
@@ -43,7 +43,7 @@
 							<option v-for="val in options" :value="val.value">{{val.value}}</option>
 						</select>
 					</div>
-					<div class="save-change-modal" @click="saveModal(itemone.id)">		
+					<div class="save-change-modal" @click="editItem()">		
 					</div>
 				</div>
 			</div>
@@ -91,13 +91,14 @@
 							</div>
 							<div class="productName">
 								<span class="prdName">
-									<router-link to="/">{{item.itemName}}</router-link>
+									<a href="">{{item.itemName}}</a>
 								</span>
 								<br>
 								<span class="variantName">{{item.itemStandard}}
 									<img :src="`./../../../static/img/shopcar/${item.img}`" alt="">
-									<div  @click="change(item.ModeCode,item.itemStandard,item.itemNumber,item.myId)">
-										<router-link to="/" >修改</router-link>
+									<div  >
+										<a  @click="change(index,item.ModeCode,item.itemStandard,item.itemNumber)">修改</a>
+										<router-link to="/" ></router-link>
 									</div>
 								</span>
 							</div>
@@ -360,7 +361,11 @@ import modal from "./modal"
 				itemValue:null,
 				defaultNumber:null,
 				defaultStandard:null,
+				fixedStandard:null,
+				fixedNumber:null,
 				showchange:false,
+				currentIndex:null,
+				currentModeCode:null,
 				itemone:null,
 				showmodal:false,	
 				totalPrice:[],
@@ -377,32 +382,36 @@ import modal from "./modal"
 			changeModal(){
 				this.itemone=null;
 			},
-			saveModal(id){
-				console.log('id',id);
-				var Standard=this.defaultStandard;
-				var num=this.defaultNumber;
-				axios.get('/save',{
-						params:{
-								id:id,
-								itemStandard:Standard,
-								itemNumber:num
-							}
-						}).then((response)=>{
-						    var res=response.data;
-							if(res.status=="0"){
-								console.log(res.msg)
-							}
-						})
-			
+
+			//编辑商品
+			editItem(){
+				axios.post('/users/editItem',{
+				    itemStandard:this.defaultStandard,
+					itemNumber: this.defaultNumber,
+					currentIndex: this.currentIndex,
+					ModeCode: this.currentModeCode
+				})
+				.then((response)=>{
+					var res=response.data;
+					if(res.status=="0"){
+						console.log(res.msg)
+						this.itemone = null;
+						this.getCartList();
+					}
+				})
 			},
+			
+			//删除商品
 			dele(id){
 				axios.post("/users/deleteItem",{index:id}).then((response)=>{
 				    var res=response.data;
 					if(res.status=="0"){
-						console.log(res.msg)
+						this.showmodal = false;
+						this.getCartList();
 					}
 				})
 			},
+
 			getCartList(){
 				var _this=this;
                 var userID = this.getCookie("userID");
@@ -412,8 +421,6 @@ import modal from "./modal"
 					if(res.status="0"){
 						console.log(res.msg);
 						this.list = res.result;
-
-						// _this.list=res.msg[0];
 						this.getshopId();
 					}
 				})
@@ -437,17 +444,19 @@ import modal from "./modal"
 				this.item.index=id;
 				this.showmodal=true;
 			},
-			change(code,sta,num,id){
+			change(index,code,sta,num){
+				this.currentIndex = index;
+				this.currentModeCode = code;
 				this.showchange=true;
 				this.defaultStandard=sta;
 				this.defaultNumber=num;
 				console.log(sta,num);
-				var _this=this;
-				axios.get(`/goods?ModeCode=${code}`).then((response)=>{
+				
+				axios.get('/goods',{ params:{ModeCode:code}
+				 }).then((response)=>{
 					var res=response.data;
 					if(res.status="0"){
-							_this.itemone=res.msg[0];
-							_this.itemone.id=id;
+							this.itemone=res.msg[0];
 						}
 				})
 			},
@@ -459,6 +468,7 @@ import modal from "./modal"
 				})
 				this.Total=total;
 			},
+			//设定cookie
 			setCookie: function (cname, cvalue, exdays) {
                 var d = new Date();
                 d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
@@ -747,9 +757,15 @@ import modal from "./modal"
 	    width: 320px;
 	    height: 66px;
 	    float: left;
-	    padding-top: 20px;
+	    /*padding-top: 20px;*/
 	    font-size: 14px;
 	}
+
+	.productName>span{
+		display: inline-block;
+		height: 10px;
+	}
+
 	.productName .prdName a {
 		color: #000000;
 		font-size: 12px;

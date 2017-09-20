@@ -71,6 +71,9 @@ export default {
    computed:{
     nickName(){
       return this.$store.state.nickName;  
+    },
+    cartCount(){
+      return this.$store.state.cartCount;  
     }
     
   },

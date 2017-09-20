@@ -1,6 +1,6 @@
 <template>
   <div class="itemdetail-view">
-  	<button @click='getHistoryMode()'>看一看</button>
+  	<!-- <button @click='getHistoryMode()'>看一看</button> -->
 	<nav-bread>
 		<li slot='family'>
 			<router-link :to='model.subDepartmentCode+"/"+model.familyCode'> {{ model.familyName }} </router-link>
@@ -81,7 +81,7 @@
 			</div>
 			<div class="ProductStanard">
 				<label>规格:</label>
-				<select v-model='value'>
+				<select v-model='selectStandard'>
 					<option 
 					v-for='(item,index) in model.item' 
 					v-model='item.itemStandard'
@@ -188,23 +188,26 @@
  		</div>
  	</div>
 
- 	<!-- 建议搭配使用部分 -->
- 	<div class="item-mix">
+ 	<!-- 建议搭配使用部分
+ 	<!-- <div class="item-mix">
  		<h2>建议搭配使用</h2>
  		<p>待做</p>
- 	</div>
+ 	</div> --> 
 
  	<!-- 浏览历史使用部分 -->
  	<div class="item-history">
  		<h2>浏览过的产品</h2>
- 		<ul>
- 			<li>
+ 		<ul class="clearfix">
+ 		 	<li v-for='item in historyItemModel' class="clearfix">
  				<div>
- 					<img src="./../../static/img/goods/1008/SHU2013052701_m.jpg" height="150" width="90">	
  				</div>
-				
-				<button>查看</button>
-				<button>立即购买</button>
+ 				<div class="name">{{ item.ModelChName }}</div>	
+ 				<div>
+					<span class="price"> ￥ {{ item.ModelOriginPrice }}</span>		
+ 				</div>
+ 				
+				<button class="wacth">查看</button>
+				<button class="immate-buy">立即购买</button>
  			</li>
  		</ul>
  	</div>
@@ -283,9 +286,7 @@ import NavBread from './../components/NavBread.vue'
 import Star from './../components/Star.vue'
 
 export default {
-
   name: 'itemdetail',
-
   data () {
     return {
     	path:'',
@@ -295,6 +296,7 @@ export default {
     	commentContent:'',
     	inv:'',
     	historyItem:[],
+    	historyItemModel:[],
     	pageNumber:'',
     	pageSize:5,
     	pageStart:1,
@@ -312,7 +314,7 @@ export default {
     	modelCode: '1001',
     	showComemt:true,
     	showThanks:false,
-    	value:'',
+    	selectStandard:'',
     	selectValue:'',
     	currentStandard:0,
     	buyAmount:1,
@@ -389,7 +391,7 @@ export default {
   				console.log('开始发送cookie')
   				this.sendItemCookie();
   				console.log(this.historyItem);
-  				console.log('开始获取历史记录商品')
+  				this.selectStandard = res.result.item[0].itemStandard;
   			}
   		})
   	},
@@ -397,12 +399,17 @@ export default {
   	//添加到购物车
   	addCart(){
   		//这里要传入三个参数 一个商品的数量 一个商品的id 还有商品的规格
-  		axios.post('/goods/addCart',{modelCode:1001,itemStandard:'450ml常规版',itemNumber:2}).then((response)=>{
-  			var res = response.data;
-  			if(res.status == '0'){
-  				console.log(res.msg);
-  			}else{
-  				console.log(res.msg);
+  		axios.post('/goods/addCart',{
+  			modelCode:this.$route.query.modelCode,
+  			itemStandard:this.selectStandard,
+  			itemNumber:this.buyAmount})
+  			.then((response)=>{
+  				var res = response.data;
+  					if(res.status == '0'){
+  					console.log(res.msg);
+  				}
+  				else{
+  					console.log(res.msg);
   			}
   		})
   	},
@@ -576,7 +583,7 @@ export default {
 				})
 				newArray.forEach((item)=>{
 					if(item[0]==" itemCookie"){
-						newArray3 = item[1].split('-').rever;
+						newArray3 = item[1].split('-').reverse();
 					}
 				})
 				console.log(newArray3);
@@ -586,15 +593,12 @@ export default {
 			}else{
 				this.getHistoryMode();
   				this.countPageNumber();
-				// console.log(this.historyItem);
-				// console.log('重复cookie');
-
-				
 			}
 			})  		
 		}
   	},
 
+  	//根据页数来传创建一个纯数组 作为分页
   	creatArray(n){
   		var newArray = [];
   		for(var i=0; i < n; i++){
@@ -615,29 +619,39 @@ export default {
   		if(this.historyItem<=1){
   			console.log('不存在浏览记录')
   		}else{
-  			var parma = {
-  			item1: this.historyItem[1],
-  			item2: this.historyItem[2],
-  			item3: this.historyItem[3],
-  			item4: this.historyItem[4],
+  			
+  		//请求的数据
+  		var realLength =(this.historyItem.filter((item)=>{
+  				return item != undefined
+  			})).length;
+  		
+  		var parma = {}
+  		for(var i=1; i<realLength; i++){
+  				parma['item'+i] = this.historyItem[i]
   			}
-  			console.log('parma是',parma);
-  			axios.get('/goods/getHistoryMode',{params:parma}).then((response)=>{
-  			var res = response.data;
-  			if(res.status == '0'){
-  				console.log(res.msg);
+  			console.log('现在的parms是',parma);
+  		
+  		if(realLength <= 1){
+  			console.log('没有发送')
+  		}else{
+  			axios.get('/goods/getHistoryMode',{params:parma}).
+  			then((response)=>{
+  				var res = response.data;
+  				if(res.status == '0'){
+  					this.historyItemModel = res.result;
   				}
   			})
 
-  		}
+  		}	
 
-  		
   			
+  			}	
   		}
 	},
 	//钩子函数
   	mounted:function(){
   		this.getModelDetail();
+  		this.getHistoryMode();
   	},
 }
 
@@ -1032,6 +1046,44 @@ export default {
 	  font-size: 12px;
 	  color: #ffffff;
 	  background-color: black;
+	}
+
+	.item-history ul{
+		text-align: center;
+		padding-left: 0px;
+	}
+
+	.item-history ul li{
+		float: left;
+		width: 220px;
+	}
+
+	.item-history ul li button{
+		border: none;
+		display: inline-block;
+		margin-top: 10px;
+		margin-right: 10px;
+		color: white;
+	}
+
+	.item-history ul li .wacth{
+		background-color: #666666;
+	}
+
+
+	.item-history ul li .immate-buy{
+		background-color: red;
+		opacity: .6;
+	}
+
+	.item-history .name{
+		font-size: 14px;
+		width: 200px;
+		height: 45px;
+	}
+
+	.item-history .price{
+		font-size: 14px;
 	}
 
 	
