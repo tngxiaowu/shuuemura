@@ -32,15 +32,15 @@
 					<h1>支付方式及送货信息</h1>
 				</div>	
 			</div>
-			<div class="mainContent">
+			<!-- <div class="mainContent">
 				<table class="productList">
 					<tr class="list" v-for="(item,index) in list">
 					</tr>
 				</table>
-			</div>
+			</div> -->
 			<div class="totalwrap">
 				<div class="info_box">
-					<div class="form transport">
+					<div class="transport deliver-information">
 						<div>
 							<div class="thead">
 								<div class="tpay">送货信息</div>
@@ -49,25 +49,29 @@
 								<table>
 									<tbody>
 										<tr v-for='(item,index) in addressList'>
-											<td><input type="radio" name="addresslist" v-model='checkedAddress'
+											<td class="inputradio"><input type="radio" name="addresslist" v-model='checkedAddress'
 											:value='item.addressId'
 												></td>
 											<td> {{ item.addressShortcut }} </td>
-											<td> {{ item.addressee }} </td>
+											<td class="addresseeName"> {{ item.addressee }} </td>
 											<td> {{ item.province }} </td>
 											<td> {{ item.city }} </td>
-											<td> {{ item.detailAddress }} </td>
+											<td class="detailAddress"> {{ item.detailAddress }} </td>
 											<td> {{ item.postCode }} </td>
-											<td> {{ item.telPhone }} </td>
-											<td> <span @click='editAddress(item.addressId)'>修改</span> </td>
-											<td> <span @click='openModalBox(index)'>删除</span> </td>
+											<td class="telPhone"> {{ item.telPhone }} </td>
+											<td class="edit-btn"> <span @click='editAddress(item.addressId)'>修</span> </td>
+											<td class="delete-btn"> <span @click='openModalBox(index)'>删</span> </td>
 										</tr>
 									</tbody>
 								</table>
 								<address-add @add-adress-suc='closeAddressAdd'   v-if='showAddressAdd'></address-add>
 								<address-edit @edit-address-suc='closeAddressEdit' v-if='showAddressEdit' :AddressId='checkedAddress'></address-edit>
+								<div class="clearfix">
+									<button 
+									class="add-new-address-btn" 
+									@click='addNewAddress()' v-if='showAddBtn'>添加新地址</button>	
+								</div>
 								
-								<button @click='addNewAddress()' v-if='showAddBtn'>添加新的地址</button>
 							</div>
 						</div>
 					</div>
@@ -100,6 +104,7 @@
 								<div class="tpay">支付方式</div>
 							</div>
 							<div class="chooseBillAddress">
+								<p>货到付款</p>
 							</div>
 						</div>
 					</div>
@@ -436,6 +441,63 @@ import AddressAdd from './addressAdd.vue'
 		color: white;
 		cursor: pointer;
 	}
+
+	table{
+		margin-bottom: 13px;
+	}
+
+	p{
+		margin: 0px;
+		font-size: 14px;
+	}
+
+	tr {
+		width: 640px;
+	}
+
+	tr td{
+		width: 60px;
+		font-size: 14px;
+		text-align: center;
+		
+	}
+
+	.clearfix:after {
+	    content:".";
+	    display:block;
+	    height:0;
+	    visibility:hidden;
+	    clear:both;
+  	}
+
+  	.clearfix {
+    	*zoom:1;
+  	}
+
+	tr .inputradio{
+		width: 17px;
+	}
+
+	tr .addresseeName{
+		width: 60px;
+	}
+
+	tr .detailAddress{
+		width: 250px;
+	}
+
+	tr .telPhone{
+		width: 130px;
+	}
+
+	tr .edit-btn{
+		width: 23px;
+	}
+
+	tr .delete-btn{
+		width: 12px;
+	}
+
 	.modal{
 		width: 400px;
 	}
@@ -619,12 +681,18 @@ import AddressAdd from './addressAdd.vue'
 		font-weight:normal;
 	}
 	.core {
-		width: 980px;
+		width: 960px;
 		min-height: 1058px;
 		overflow: hidden;
 		margin: 0 auto;
 		background: #fff;
 		position: relative;
+	}
+
+	.core .viewhead{
+		padding-right: 10px;
+		padding-left: 10px;
+
 	}
 	.core .viewhead a {
 		position: absolute;
@@ -691,7 +759,8 @@ import AddressAdd from './addressAdd.vue'
 	}
 
 	.chooseBillAddress{
-		padding-top: 28px;
+		padding-left: 28px;
+		padding-top: 10px;
 		padding-bottom: 30px;
 	}
 
@@ -715,7 +784,7 @@ import AddressAdd from './addressAdd.vue'
 		width: 665px;
 	}
 	.totalwrap .info_box {
-		height: 134px;
+		height: 154px;
 		margin-top: 20px;
 		margin-left: 10px;
 	}
@@ -723,14 +792,23 @@ import AddressAdd from './addressAdd.vue'
 		clear: both;
 	    zoom: 1;
 	    margin: 0 0 30px;
-	    padding: 20px 30px 20px 30px;
+	    /*padding: 20px 30px 20px 30px;*/
 	    font-size: 14px;
+	    padding-top: 20px;
 	    position: relative;
 	    overflow: hidden;
+	    background-color: #f2f2f2;
 	}
+
+	.totalwrap .info_box .deliver-information{
+		background-color: #ffffff;
+	}
+
 	.totalwrap .info_box .transport .radioGroup {
+		padding-left: 28px;
 		padding-bottom: 3px;
 	}
+
 	.transport .thead {
 	    overflow: hidden;
 	    padding-bottom: 10px;
@@ -739,7 +817,9 @@ import AddressAdd from './addressAdd.vue'
 	}
 	.totalwrap .info_box .transport .tpay {
 		font-weight: bold;
+		margin-left: 28px;
 	}
+
 	.transport .legend {
 	    height: 18px;
 	    margin-bottom: 6px;
@@ -913,7 +993,7 @@ import AddressAdd from './addressAdd.vue'
 		float: left;
 		display: block;
 
-		top: 350px;
+		top: 450px;
 		left: 10px;
 	}
 	.fl .submits .continue {
@@ -1207,6 +1287,17 @@ import AddressAdd from './addressAdd.vue'
 	    top: 3px;
 	    width: 36px;
 	    text-align: center;
+	}
+
+	.add-new-address-btn{
+		background-color: #999;
+		color: white;
+		border: none;
+		width: 93px;
+		padding: 0px;
+		margin: 0px;
+		font-size: 14px;
+		height: 24px;
 	}
 </style>
 

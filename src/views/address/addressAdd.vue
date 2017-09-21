@@ -24,38 +24,38 @@
   	<div class="address-r">
   		<ul>
   			<li>
-  				<label>省份:</label>
+  				<label>省份*</label>
   				<select v-model='province'>
   					<option v-for='item in province.name'>请选择</option>
   				</select>
   			</li>
   			<li>
-  				<label>城市:</label>
+  				<label>城市*</label>
   				<select>
   					<option>请选择</option>
   				</select>
   			</li>
   			<li>
-  				<label>区域:</label>
+  				<label>区域*</label>
   				<select>
   					<option>请选择</option>
   				</select>
   			</li>
   			<li>
-  				<label>街道:</label>
+  				<label>街道*</label>
   				<select>
   					<option>请选择</option>
   				</select>
   			</li>
   			<li>
-  				<label>邮编:</label>
+  				<label>邮编*</label>
   				<input type="" name="">
   			</li>
   		</ul>
   	</div>
     <div>
-      <button @click='cancelEdit()'>取消修改</button>
-      <button @click='addAddress()' >保存地址</button>
+      <button @click='cancelEdit()' class="cancel-btn">取消修改</button>
+      <button @click='addAddress()' class="save-btn" >保存地址</button>
     </div>
   </div>
 </template>
@@ -110,20 +110,91 @@ export default {
 
 <style scoped>
 	ul{
-		margin: 0px;
-		padding: 0px;
-	}
-	li{
-		list-style: none;
-	}
-	.address-l{
-		float: left;
-		width: 292px;
+    margin: 0px;
+    padding: 0px;
+  }
+  li{
+    list-style: none;
+  }
+  .address-l{
+    float: left;
+    width: 292px;
     height: 180px;
-	}
+  }
 
-	ul li{
-		margin-bottom: 15px;
-	}
+  .address-l ul li{
+    width: 292px;
+    height: 30px;
+    padding-bottom: 15px;
+    margin: 0px;
+  }
+
+  .address-l ul li label{
+      display: inline-block;
+      width: 68px;
+      margin-right: 11px;
+  }
+
+   .address-l ul li input{
+      display: inline-block;
+      width: 176px;
+      height: 26px;
+      padding: 2px;
+      padding-left: 3px;
+  }
+
+  ul li{
+    margin-bottom: 15px;
+  }
+
+  .address-r{
+    margin-left: 49px;
+    float: left;
+    width: 264px;
+    height: 258px;
+  }
+
+  .address-r ul li label{
+      display: inline-block;
+      width: 68px;
+      height: 30px;
+      margin-right: 8px;
+  }
+
+  .address-r ul li select{
+     width: 180px;
+     height: 26px;
+  }
+
+  .address-r ul li input{
+     width: 176px;
+     height: 26px;
+  }
+
+  .cancel-btn{
+    background-color: #999;
+    color: white;
+    border: none;
+    width: 93px;
+    padding: 0px;
+    margin: 0px;
+    font-size: 14px;
+    height: 24px;
+  }
+
+  .save-btn{
+    background-color: red;
+    opacity: .6;
+    color: white;
+    border: none;
+    width: 93px;
+    padding: 0px;
+    margin: 0px;
+    font-size: 14px;
+    height: 24px;
+
+  }
+
+
 	
 </style>

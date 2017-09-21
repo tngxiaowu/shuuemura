@@ -217,63 +217,65 @@
    <madol-box v-if="showCommentBox" @close-modal-box='closeModalBox'>
   
      <div slot='content' class="main-content">
+      <!-- <div>
+        
+      </div> -->
+      <div class="wrap">
      	<div class="comment-left" >
      		<h3> {{ model.ModelChName }} </h3>
-     		<!-- <img :src='"static/img/goods/"+relatedItem[0].itemImg'> -->
+     		<img :src='"static/img/goods/"+relatedItem[0].itemImg'>
      	</div>
      	<div class="comment-right">
-     		<div>
-				<div>
-					<h3>发表评论</h3>	
-				</div>
-     			
-     			<div class="star-area">
-     				<div class="star-left">
-     					<span>*总体评价</span>
-     				</div>
+				 <div>
+					 <h3>发表评论</h3>	
+				 </div>
+     		 <div class="star-area">
+     			 <div class="star-left">
+     				 <span>*总体评价</span>
+     			 </div>
 					
-					<div class="star-right">
-						<star @addStar='starComment' :isRated='isRated' ></star>	
-					</div>
-					
-     			</div>
-     		 </div>
-     		<div v-if='showComemt' class="clearfix">
-     			<h3>详细评论</h3>
-     			<div class="star-left">
-     			<span>评论：</span>
-     			</div>
-     			<div class="star-left">
-     			<span class="comment-notice">请在下方留下您的评论（您还可输入500个字符）</span>
-     			<textarea v-model='commentContent'></textarea>
-          <em class="over-length-warn" v-if='showOverWords'>输入字数不能超过500字</em>
-     			</div>
-     			<!-- <button @click='addComment()'>提交</button> -->
-     		</div>
-			<div v-if='showAddpic' class="addPic" >
-				<div class="star-left">
-					<span>上传图片：</span>
-				</div>
-					<input type="file" name="" @change='getFile($event,1)' >
-					<span @click='deleteImg(1)'> x </span>
-					<input type="file" name="" @change='getFile($event,2)'>
-					<span @click='deleteImg(2)'> x </span>
-					<input type="file" name="" @change='getFile($event,3)'>
-					<span @click='deleteImg(3)'> x </span>
-					<img :src="dataUrl1" class="privew-img privew-img-1" v-if='dataUrl1'>
-					<img :src="dataUrl2" class="privew-img privew-img-2" v-if='dataUrl2'>
-					<img :src="dataUrl3" class="privew-img privew-img-3" v-if='dataUrl3'>
-				</div>
-			<div class="submit" >
-				<button @click='submit()'>提交</button>
-			</div>
+  				 <div class="star-right">
+  						<star @addStar='starComment' :isRated='isRated' ></star>	
+  				 </div>
+     		  </div>
+     	
+         	<div v-if='showComemt' class="clearfix">
+         			<h3>详细评论</h3>
+         			<div class="star-left">
+         			  <span>评论：</span>
+         			</div>
+         			<div class="star-left-area">
+           			<span class="comment-notice">请在下方留下您的评论（您还可输入500个字符）</span>
+           			<textarea v-model='commentContent'></textarea>
+                <em class="over-length-warn" v-if='showOverWords'>输入字数不能超过500字</em>
+         			</div>
+         			<!-- <button @click='addComment()'>提交</button> -->
+         	</div>
+    			<div v-if='showAddpic' class="addPic" >
+    				<div class="star-left">
+    					<span>上传图片：</span>
+    				</div>
+    					<input type="file" name="" @change='getFile($event,1)' >
+    					<span @click='deleteImg(1)'> x </span>
+    					<input type="file" name="" @change='getFile($event,2)'>
+    					<span @click='deleteImg(2)'> x </span>
+    					<input type="file" name="" @change='getFile($event,3)'>
+    					<span @click='deleteImg(3)'> x </span>
+    					<img :src="dataUrl1" class="privew-img privew-img-1" v-if='dataUrl1'>
+    					<img :src="dataUrl2" class="privew-img privew-img-2" v-if='dataUrl2'>
+    					<img :src="dataUrl3" class="privew-img privew-img-3" v-if='dataUrl3'>
+    			</div>
+    			<div class="submit" >
+    				<button @click='submit()'>提交</button>
+    			</div>
 
      		<div v-if='showThanks'>
      			感谢您的评论
      		</div>
-     		
+      </div>
      	</div>
-     </div>
+     	</div>
+     
    </madol-box>
     
    
@@ -651,10 +653,6 @@ export default {
   	}	
   },
 
-      //检查cookie是否登录
-      checkLogin(){
-
-      }
 
 	},
 	//钩子函数
@@ -675,15 +673,39 @@ export default {
 		width: 962px;
 	}
 
+  .wrap{
+    width: 880px;
+    padding: 40px 40px 10px;
+  }
+
 	.comment-left{
 		float: left;
 		width: 240px;
+    padding-top: 40px;
+    margin-right: 40px;
+    padding-right: 40px;
+    text-align: center;
 	}
+
 
 	.comment-right{
 		float: left;
 		width: 560px;
+    padding-top: 40px;
 	}
+
+  .comment-right h3{
+    margin: 0px;
+    width: 560px;
+    height: 21px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e5e5e5;
+    margin-bottom: 22px;
+  }
+
+  .star-area>div{
+    margin-left: 20px;
+  }
 
 	textarea{
 		width: 330px;
@@ -997,6 +1019,16 @@ export default {
 		font-size: 14px;
 		width: 176px;
 	}
+
+  .star-left>span{
+    /*margin-left: 20px;*/
+  }
+
+  .star-left-area{
+    float: left;
+    font-size: 14px;
+    width: 322px;
+  }
 
 	.star-right{
 		float: left;
