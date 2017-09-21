@@ -31,7 +31,6 @@
 				<div class="ptitle ptitle_cart">
 					<h1>支付方式及送货信息</h1>
 				</div>	
-				<router-link to="/address" v-show="shopbtn">完成购物 ></router-link>
 			</div>
 			<div class="mainContent">
 				<table class="productList">
@@ -60,13 +59,15 @@
 											<td> {{ item.detailAddress }} </td>
 											<td> {{ item.postCode }} </td>
 											<td> {{ item.telPhone }} </td>
-											<td> <span @click='editAddress(index)'>修改</span> </td>
+											<td> <span @click='editAddress(item.addressId)'>修改</span> </td>
 											<td> <span @click='openModalBox(index)'>删除</span> </td>
 										</tr>
 									</tbody>
 								</table>
-								<address-edit @add-adress-suc='closeAddressEdit'   v-if='showAddressEdit'></address-edit>
-								<button @click='addNewAddress()'>添加新的地址</button>
+								<address-add @add-adress-suc='closeAddressAdd'   v-if='showAddressAdd'></address-add>
+								<address-edit @edit-address-suc='closeAddressEdit' v-if='showAddressEdit' :AddressId='checkedAddress'></address-edit>
+								
+								<button @click='addNewAddress()' v-if='showAddBtn'>添加新的地址</button>
 							</div>
 						</div>
 					</div>
@@ -113,7 +114,7 @@
 						<a href="shopCart" class="goBack" >返回上一步</a>
 					</div>
 					<div class="sample_part">
-						<router-link class='btn2_complete' to="" v-show="shopbtn">确认购买 ></router-link>
+						<a class='btn2_complete' @click='createOrderList()'> 确认购买 </a>
 					</div>
 				</div>
 			</div>
@@ -198,6 +199,7 @@
 import axios from "axios"
 import modal from "./modal"
 import AddressEdit from './addressEdit.vue'
+import AddressAdd from './addressAdd.vue'
 	export default {
 	  	name: 'shopcar',
 	  	components:{
@@ -215,7 +217,9 @@ import AddressEdit from './addressEdit.vue'
 				defaultNumber:null,
 				defaultStandard:null,
 				showchange:false,
+				showAddBtn: true,
 				showAddressEdit:false,
+				showAddressAdd:false,				
 				itemone:null,
 				showmodal:false,	
 				totalPrice:[],
@@ -228,6 +232,7 @@ import AddressEdit from './addressEdit.vue'
 				item:{}
 			}
 		},
+
 		methods:{
 			changeModal(){
 				this.showDeleetBox = false;
@@ -333,23 +338,24 @@ import AddressEdit from './addressEdit.vue'
             },
 
             closeAddressEdit(data){
+            	this.showAddBtn = true;
             	this.showAddressEdit = false;
      			this.getAddressList();
             },
 
-            addNewAddress(){
-            	this.showAddressEdit = true;
+            closeAddressAdd(){
+            	this.showAddBtn = true;
+            	this.showAddressAdd = false;
             	this.getAddressList();
-
             },
+
             getAddressList(){
             	axios.post('/users/getAddressList').then((response)=>{
             		var res = response.data;
             		if(res.status == '0'){
             			this.addressList = res.result.adressList;
             			//设置默认状态
-            			this.checkedAddress = this.addressList[0].addressId;
-
+            			
             		}
             	})
             },
@@ -370,11 +376,35 @@ import AddressEdit from './addressEdit.vue'
             },
 
             editAddress(id){
+            	this.showAddressAdd = true;
+            	this.showAddressAdd = false;
+            	this.checkedAddress = id;
+            	this.showAddBtn = false;
             	this.showAddressEdit = true;
+            	this.getAddressList();
+
             },
 
-            test(){
+            addNewAddress(){
+            	this.showAddBtn = false;
+            	this.showAddressAdd = true;
+            	this.getAddressList();
 
+            },
+
+            //创建订单
+            createOrderList(){
+            	axios.post('/users/createOrderList',{
+            		addressId: this.checkedAddress
+
+            	})
+            	.then((response)=>{
+            		var res = response.data;
+            		if(res.status == '0')
+            		{
+            			console.log('订单创建成功')
+            		}
+            	})
             }
 		},	
 		created(){
@@ -382,10 +412,13 @@ import AddressEdit from './addressEdit.vue'
 		},
 		mounted(){
 			this.getAddressList();
+			// this.checkedAddress = this.addressList[0].addressId;
+
 
 		},
 		components:{
 			AddressEdit,
+			AddressAdd,
 			modal
 		}
 

@@ -1,27 +1,5 @@
 <template>
   <div>
-  	<div class="address-l">
-  		<ul>
-  			<li>
-  				<label>地址名称:</label>
-  				<input type="" name="" placeholder="例：家庭地址" v-model='addressShortcut'>
-  			</li>
-  			<li>
-  				<label>姓名:</label>
-  				<input type="" name="" v-model='addressee'>
-  			</li>
-  			<li>
-  				<label>手机号码:</label>
-  				<input type="" name="" v-model='telPhone'>
-  			</li>
-  			<li>
-  				<label>详细地址:</label>
-  				<input type="" name="" v-model='detailAddress'>
-  			</li>
-  		</ul>
-  		
-  	</div>
-  	<div class="address-r">
   		<ul>
   			<li>
   				<label>省份:</label>
@@ -52,11 +30,6 @@
   				<input type="" name="">
   			</li>
   		</ul>
-  	</div>
-    <div>
-      <button @click='cancelEdit()'>取消修改</button>
-      <button @click='editAddress()' >保存修改</button>
-    </div>
   </div>
 </template>
 

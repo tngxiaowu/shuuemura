@@ -246,6 +246,7 @@
      			<div class="star-left">
      			<span class="comment-notice">请在下方留下您的评论（您还可输入500个字符）</span>
      			<textarea v-model='commentContent'></textarea>
+          <em class="over-length-warn" v-if='showOverWords'>输入字数不能超过500字</em>
      			</div>
      			<!-- <button @click='addComment()'>提交</button> -->
      		</div>
@@ -302,6 +303,7 @@ export default {
     	pageStart:1,
     	currentIndex:0,
     	//图片预览的地址
+      showOverWords:false,
     	isRated:false,
     	dataUrl:'',
     	dataUrl1:'',
@@ -423,7 +425,7 @@ export default {
   	addComment(){
   		//如果输入内容为空
   			if(this.commentContent.length >500){
-  				console.log('您输入的字段超过500字')
+  				this.showOverWords = true;
   			}else{
   				axios.post('/goods/addComment',{
 	  			//用户评论内容
@@ -524,7 +526,6 @@ export default {
                 'Content-Type': 'application/x-www-form-urlencoded'
             }
         }
-        
         //如果3张图片不全为空，那么就会发起这个请求
         if(this.pic1||this.pic2||this.pic3){
         	axios.post('/goods/uploadImg',formData,config).then((response)=>{
@@ -644,15 +645,17 @@ export default {
   				var res = response.data;
   				if(res.status == '0'){
   					this.historyItemModel = res.result;
-
   				}
   			})
-
   		}	
+  	}	
+  },
 
-  			
-  			}	
-  		}
+      //检查cookie是否登录
+      checkLogin(){
+
+      }
+
 	},
 	//钩子函数
   	mounted:function(){
@@ -1091,6 +1094,10 @@ export default {
 	.item-history .price{
 		font-size: 14px;
 	}
+
+  .over-length-warn{
+    color: red;
+  }
 
 	
 

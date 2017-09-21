@@ -55,7 +55,7 @@
   	</div>
     <div>
       <button @click='cancelEdit()'>取消修改</button>
-      <button @click='editAddress()' >保存修改</button>
+      <button @click='addAddress()' >保存地址</button>
     </div>
   </div>
 </template>
@@ -63,9 +63,6 @@
 <script>
 import axios from 'axios'
 export default {
-  props:{
-    AddressId:''
-  },
 	data(){
 		return{
 			show:true,
@@ -76,11 +73,6 @@ export default {
       detailAddress:'',
 		}
 	},
-  watch:{
-    AddressId:function(){
-      this.getCheckedAddress();
-    }  
-    },
 	computed:{
 		city(){
 		}
@@ -92,9 +84,8 @@ export default {
   		close(){
   			this.$emit("close");
   		},
-      editAddress(){
-        axios.post('/users/editAddress',{
-          addressId: this.AddressId,
+      addAddress(){
+        axios.post('/users/addAddress',{
           addressShortcut: this.addressShortcut, 
           addressee: this.addressee, 
           detailAddress: this.detailAddress,
@@ -106,35 +97,14 @@ export default {
           var res = response.data;
           if(res.status == '0'){
             console.log(res.msg);
-            this.$emit('edit-address-suc')
-          }
-        })
-      },
-
-      getCheckedAddress(){
-        axios.post('/users/loadAddress',{ addressId: this.AddressId })
-        .then((response)=>{
-          var res = response.data;
-          if( res.status == '0'){
-            this.addressShortcut = res.result.addressShortcut
-            this.addressee = res.result.addressee
-            this.telPhone = res.result.telPhone
-            this.detailAddress = res.result.detailAddress
-            
+            this.$emit('add-adress-suc')
           }
         })
       },
       cancelEdit(){
-        this.$emit('edit-address-suc')
-      },
-      test(){
-        console.log('haha');
+        this.$emit('add-adress-suc')
       }
-  	},
-    mounted(){
-      this.getCheckedAddress();
-      
-    }
+  	}
 }
 </script>
 

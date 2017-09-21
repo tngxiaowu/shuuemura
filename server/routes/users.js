@@ -599,6 +599,201 @@ router.post('/deleteAddress',(req,res,next)=>{
 	})
 })
 
+//修改地址-加载被选中的地址
+router.post('/loadAddress',(req,res,next)=>{
+	var userID = req.cookies.userId; 
+	var addressId = req.body.addressId;
+	var tempArr = null;
+	
+	User.findOne({'userID': userID},(err,userDoc)=>{
+		if(err){
+			throw err
+		}else{
+			if(userDoc == null){
+				res.json({
+					status:'3',
+					msg:'找到用户为空'
+				})
+			}
+			if(userDoc){
+				userDoc.adressList.forEach((item)=>{
+					if(item.addressId == addressId){
+						tempArr = item;
+					}
+				})
+
+				if(tempArr){
+					res.json({
+						status:'0',
+						msg:'找到地址',
+						result:tempArr
+					})
+				}else{
+					res.json({
+						status:'3',
+						msg:'该地址列表不存在'
+					})
+
+				}
+			}
+		}
+	})
+})
+
+//修改地址-修改地址
+router.post('/editAddress',(req,res,next)=>{
+	//获取用户ID
+	var userID = req.cookies.userId;
+	//获取用户地址ID
+	var addressId = req.body.addressId;
+	//获取用户修改信息
+	var addressShortcut = req.body.addressShortcut;
+	var addressee = req.body.addressee;
+	var detailAddress = req.body.detailAddress;
+	var telPhone = req.body.telPhone;
+
+	//定义一个容器
+	var tempArr = [];
+	//判断用户是否登录
+	//用户已经登录
+	if(userID){
+		User.findOne({'userID': userID},(err,userDoc)=>{
+			if(err){
+				throw err
+			}else{
+				if(userDoc == null){
+					res.json({
+						status:'0',
+						msg:'找不到用户'
+					})
+				}
+			//找到用户
+			//做去重判断
+			if(userDoc){
+					userDoc.adressList.forEach((item)=>{
+					//找到该地址
+					if(item.addressId == addressId){
+						item.addressShortcut = addressShortcut
+						item.addressee = addressee
+						item.detailAddress = detailAddress
+						item.telPhone = telPhone
+						}
+
+						tempArr.push(item);
+					})
+					console.log(tempArr);
+
+					User.update({'userID':userID},{$set:{adressList:tempArr}},function(err,result){
+						if(result){
+							res.json({
+								status:0,
+								msg:"success",
+							})
+						}
+					})
+				}
+			}
+		})
+	}
+	//用户未登录
+	else{
+		res.json({
+			status:'1',
+			msg:'用户未登录'
+		})
+	}
+
+})
+
+//生成订单(未支付状态)接口
+
+router.post('/createOrderList',(req,res)=>{
+	//获取用户ID
+	var userID = req.cookies.userId;
+	//获取送货地址列表ID
+	var addressId = req.body.addressId;
+	//定义创建时间
+	var time = sd.format(new Date(), 'YYYYMMDDHHmm');
+	//定义创建Id编号：
+	var ran1 = Math.floor(Math.random()*8999+1000)
+	var ran2 = Math.floor(Math.random()*8999+1000)
+	var orderId = ran1 + '' + time + ran2  ;
+	
+	//定义'容器'
+	var sendAddress = '';
+	var goodsList = [];
+	//用来清空购物车的
+	var tempArr = [];
+
+	//找到用户
+	User.findOne({'userID': userID},(err,userDoc)=>{
+		if(err){
+			throw err
+		}else{
+			if(userDoc == null){
+				res.json({
+					status: '3',
+					msg: '用户未找到'
+				})
+			}
+
+			if(userDoc){
+				//将购物车内商品信息放入容器中
+				userDoc.cartList.forEach((item)=>{
+					goodsList.push(item);
+				})
+
+				//将地址放入容器中
+				userDoc.adressList.forEach((item)=>{
+					if(item.addressId == addressId){
+						sendAddress = item;
+					}
+				})
+
+				//如果存在选中/未选中的状态，可以使用filter或者forEach函数进行过滤
+				//计算出商品的总价
+
+				//在商品没有选中状态的情况下 直接情况购物车
+
+				//计算出购物车商品的数量
+
+				//生成购物车订单
+				var order = {
+					orderId: orderId,
+					// orderTotal: orderTotal,
+					// orderAmount: orderAmount,
+					goodsList: goodsList,
+					orderStatus:'未支付',
+					orderData: time
+				}
+
+				//将新生成的订单放入用户订单列表
+				userDoc.orderList.push(order);
+				userDoc.save();
+
+				User.update({userID:userID},{$set:{cartList:tempArr}},(err,result)=>{
+					if(err){
+						throw err
+					}else{
+						if(result){
+							res.json({
+								status:'0',
+								msg:'创建订单成功'
+							})
+
+						}
+					}
+				})
+
+				
+			}
+		}
+	})
+
+})
+
+
+
 
 //漏写了这个一直报错
 module.exports = router;

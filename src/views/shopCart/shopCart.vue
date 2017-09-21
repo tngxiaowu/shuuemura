@@ -211,7 +211,7 @@
 						<a href="/" class="goBack" >继续购买</a>
 					</div>
 					<div class="sample_part">
-						<router-link class='btn2_complete' to="" v-show="shopbtn" to='/adress'>完成购物 ></router-link>
+						<router-link class='btn2_complete' to="" v-show="shopbtn" to='/address' >完成购物 ></router-link>
 					</div>
 				</div>
 			</div>
