@@ -153,6 +153,7 @@ router.post('/register',(req,res,next)=>{
 	//获取注册表格中的email和密码
 	var registerEmail = req.body.registerEmail;
 	var registePassword = req.body.registePassword;
+	var mobPhone = req.body.mobPhone|| '';
 	var userID = Math.floor(Math.random()*100000);
 	var user = new User({
 		"userID" : userID,
@@ -161,7 +162,7 @@ router.post('/register',(req,res,next)=>{
 	    "userEmail" : registerEmail,
 	    "male": '女士',
     	"name": '',
-    	"mobPhone": '',
+    	"mobPhone": mobPhone,
     	"brithDay": '',
 	    "orderList" : [],
 	    "cartList" : [],
