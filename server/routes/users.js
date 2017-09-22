@@ -107,7 +107,7 @@ router.post('/logout',(req,res,next)=>{
 
 //登录检查邮箱
 router.get('/checkUserEmail',(req,res,next)=>{
-	console.log(req.query.registerEmail);
+	console.log(req.query);
 	var parma = {
 		//获取get请求中的参数
 		'userEmail': req.query.registerEmail

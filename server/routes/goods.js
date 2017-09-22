@@ -66,9 +66,10 @@ router.get("/",function(req,res,next){
 
 //商品详情页加载商品信息接口
 router.get('/itemDetail',(req,res,next)=>{
-	var parma = {'ModeCode': req.query.modelCode}
+	// var parma = {'ModeCode': req.query.modelCode}
+	var parma = req.query;
 	var cartCount = null
-	Goods.findOne(parma,(err,doc)=>{
+	Goods.find(parma,(err,doc)=>{
 		if(err){
 			throw err
 		}else{
@@ -97,6 +98,41 @@ router.get('/itemDetail',(req,res,next)=>{
 		}
 	})
 })
+
+//商品详情页加载商品信息接口(备用)
+// router.get('/itemDetail',(req,res,next)=>{
+// 	// var parma = {'ModeCode': req.query.modelCode}
+// 	var parma = req.query;
+// 	var cartCount = null
+// 	Goods.findOne(parma,(err,doc)=>{
+// 		if(err){
+// 			throw err
+// 		}else{
+// 			if(doc){
+// 				User.findOne({'userID':req.cookies.userId},(err,userDoc)=>{
+// 					if(err){
+// 						throw err
+// 					}else{
+// 						if(userDoc){
+// 							console.log('userDoc是',userDoc);
+// 							userDoc.cartList.forEach((item)=>{
+// 								cartCount += item.itemNumber;
+// 							})
+
+// 						}
+
+// 						res.json({
+// 							status: '0',
+// 							result: doc,
+// 							cartCount:cartCount
+// 						})
+// 					}
+// 				})
+				
+// 			}
+// 		}
+// 	})
+// })
 
 //添加评论接口
 router.post('/addComment',(req,res,next)=>{
