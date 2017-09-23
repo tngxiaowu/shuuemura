@@ -5,11 +5,7 @@ var Schema = mongoose.Schema;
 
 var tempCartKistSchema = new Schema({
 	"visitorID" : String,
-	"cartList":[{
-		"modeCode": String,
-        "Name":String,
-        "Number": Number
-		}]
+	"cartList":	Array
     
 })
 

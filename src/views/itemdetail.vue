@@ -188,11 +188,7 @@
  		</div>
  	</div>
 
- 	<!-- 建议搭配使用部分
- 	<!-- <div class="item-mix">
- 		<h2>建议搭配使用</h2>
- 		<p>待做</p>
- 	</div> --> 
+
 
  	<!-- 浏览历史使用部分 -->
  	<div class="item-history">
@@ -325,7 +321,7 @@ export default {
     	showDes: true,
     	showUse: false,
     	showCom: false,
-    	model:{},
+    	model:{}
     }
   },
   components:{
@@ -337,7 +333,7 @@ export default {
   		relatedItem(){
   			var that = this;
   			return this.model.item.filter((item)=>{
-  				return item.itemStandard == that.value;
+  				return item.itemStandard == that.selectStandard;
   			})
   		},
   		rateScore(){
@@ -394,7 +390,6 @@ export default {
   			var res =response.data;
   			if(res.status == '0'){
   				this.model = res.result;
-  				this.value = this.model.item[0].itemStandard;
   				console.log('开始发送cookie')
   				this.sendItemCookie();
   				console.log(this.historyItem);

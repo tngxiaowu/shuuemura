@@ -80,7 +80,8 @@
 				<div class="ptitle ptitle_cart">
 					<h1>查看我的购物车</h1>
 				</div>	
-				<router-link to="/address" v-show="shopbtn">完成购物 ></router-link>
+				<p v-if='!showCartList' class="cart-empty-warn">您的购物袋为空，请选购您中意的正价产品。</p>
+				<router-link to="/address" v-show="shopbtn"  v-else >完成购物 ></router-link>
 			</div>
 			<div class="mainContent">
 				<table class="productList">
@@ -210,8 +211,9 @@
 					<div class="continue">
 						<a href="/" class="goBack" >继续购买</a>
 					</div>
-					<div class="sample_part">
-						<router-link class='btn2_complete' to="" v-show="shopbtn" to='/address' >完成购物 ></router-link>
+					<div class="sample_part" v-if='showCartList'>
+						<router-link class='btn2_complete' to="" v-show="shopbtn" to='/address' >
+							完成购物 ></router-link>
 					</div>
 				</div>
 			</div>
@@ -364,6 +366,7 @@ import modal from "./modal"
 				fixedStandard:null,
 				fixedNumber:null,
 				showchange:false,
+				showCartList: true,
 				currentIndex:null,
 				currentModeCode:null,
 				itemone:null,
@@ -505,15 +508,33 @@ import modal from "./modal"
                         this.setCookie("userID",user, 365);
                     }
                 }
+            },
+
+            checkCartlength(){
+            	if(this.list.length){
+            		console.log('购物车存在')
+            		this.showCartList = true;
+            	}else{
+            		console.log('购物车不存在')	
+            		this.showCartList = false;
+            	}
             }
 		},	
+		beforecreate(){
+			console.log('B-list的值是',this.list);
+		},
 		created(){
-			
+			console.log('C-list的值是',this.list);
 		},
 		mounted(){
 			// console.log(this.commodityListsId);
+			console.log('M-list的值是',this.list);
 			this.getCartList();
 			this.checkCookie();
+		},
+		updated(){
+			console.log('U-list的值是',this.list);
+			this.checkCartlength();
 		}
 	}
 </script>
@@ -1295,6 +1316,13 @@ import modal from "./modal"
 	    top: 3px;
 	    width: 36px;
 	    text-align: center;
+	}
+
+	.cart-empty-warn{
+		margin-top: 20px;
+		font-size: 12px;
+		color: #7a7a7a;
+		padding-left: 10px;
 	}
 </style>
 

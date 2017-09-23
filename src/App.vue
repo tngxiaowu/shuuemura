@@ -51,7 +51,8 @@ export default {
     return{
       showLogform:false,
       showMadolBox: false,
-      showInput: true
+      showInput: true,
+      showTest:false
     }
   },
 
