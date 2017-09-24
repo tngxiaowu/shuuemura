@@ -81,7 +81,9 @@
 					<h1>查看我的购物车</h1>
 				</div>	
 				<p v-if='!showCartList' class="cart-empty-warn">您的购物袋为空，请选购您中意的正价产品。</p>
-				<router-link to="/address" v-show="shopbtn"  v-else >完成购物 ></router-link>
+				<a 
+				@click='updateCartList()'
+				v-show="shopbtn"  v-else >完成购物 ></a>
 			</div>
 			<div class="mainContent">
 				<table class="productList">
@@ -212,8 +214,10 @@
 						<a href="/" class="goBack" >继续购买</a>
 					</div>
 					<div class="sample_part" v-if='showCartList'>
-						<router-link class='btn2_complete' to="" v-show="shopbtn" to='/address' >
-							完成购物 ></router-link>
+						<a
+						@click='updateCartList()'
+						class='btn2_complete' to="" v-show="shopbtn" to='/address' >
+							完成购物 ></a>
 					</div>
 				</div>
 			</div>
@@ -417,7 +421,7 @@ import modal from "./modal"
 
 			getCartList(){
 				var _this=this;
-                var userID = this.getCookie("userID");
+                var userID = this.getCookie("userId");
                 console.log(userID);
 				axios.post('/users/getCartList',{userID: userID}).then((response)=>{
 					var res=response.data;
@@ -493,20 +497,21 @@ import modal from "./modal"
             },
             //清除cookie
             clearCookie: function () {
-                this.setCookie("userID", "1", -1);
+                this.setCookie("userId", "1", -1);
 
             },
 
             //检查cookie
             checkCookie: function () {
-                var user = this.getCookie("userID");
+                var user = this.getCookie("userId");
                 if (user != "") {
                     // alert("Welcome again " + user);
                 } else {
-                    user = prompt("Please enter your name:", "");
-                    if (user != "" && user != null) {
-                        this.setCookie("userID",user, 365);
-                    }
+                	this.$router.push({path:'/'});
+                    // user = prompt("Please enter your name:", "");
+                    // if (user != "" && user != null) {
+                    //     this.setCookie("userId",user, 365);
+                    // }
                 }
             },
 
@@ -518,7 +523,17 @@ import modal from "./modal"
             		console.log('购物车不存在')	
             		this.showCartList = false;
             	}
-            }
+            },
+            updateCartList(){
+				axios.post('/users/updateCartList',{list:this.list})
+				.then((response)=>{
+					var res = response.data;
+					if(res.status == '0'){
+						console.log('购物车修改成功')
+						this.$router.push('/address');
+					}
+				})
+		}
 		},	
 		beforecreate(){
 			console.log('B-list的值是',this.list);
@@ -535,7 +550,8 @@ import modal from "./modal"
 		updated(){
 			console.log('U-list的值是',this.list);
 			this.checkCartlength();
-		}
+		},
+
 	}
 </script>
 

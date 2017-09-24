@@ -14,7 +14,7 @@
    				</a>
    			</li>
    			<li class="login" v-if='!nickName'>
-   				<a href="##" @click='openMoadlBox()'>
+   				<a @click='openMoadlBox()'>
    					登录	
    				</a>
    			</li>
@@ -49,9 +49,9 @@
    				<span class="shoppingbag">
    					<img src="./../../static/img/index/shopping-bag.jpg" height="14" width="13">
    				</span>
-          <router-link to='/shopCart'>
+          <a @click='warn()' >
             我的购物袋 （ {{ cartCount }} ）
-          </router-link>
+          </a>
    			</li>
 
    		</ul>
@@ -104,18 +104,74 @@ export default {
     		var res = response.data;
     		if(res.status == '0'){
     			console.log(res.result);
-    			this.$store.commit('updateUserInfo',res.result)
-          location.reload();
+    			this.$store.commit('updateUserInfo',res.result);
+          window.location.reload();
+          this.$router.push({path:'/'});
     			console.log(res.msg);
     		}else{
     			console.log(res.msg);
     		}
     	})
-    }
+    },
+
+    //加载商品数量
+  checkCartList(){
+    axios.get('users/checkCartList').then((response)=>{
+      var res = response.data;
+      if(res.status == '0'){
+        this.$store.commit('updateCartCount',res.cartCount);
+      }
+    })
   },
+  //获取cookie
+   getCookie: function (cname) {
+                var name = cname + "=";
+                var ca = document.cookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') c = c.substring(1);
+                    if (c.indexOf(name) != -1) return c.substring(name.length, c.length);
+                }
+                return "";
+            },
+  //清除cookie
+  clearCookie: function () {
+                this.setCookie("userId", "1", -1);
+
+            },
+
+  //检查cookie
+  checkCookie: function () {
+                var user = this.getCookie("userId");
+                if (user != "") {
+                    // alert("Welcome again " + user);
+                } else {
+                  this.$router.push({path:'/'});
+                    // user = prompt("Please enter your name:", "");
+                    // if (user != "" && user != null) {
+                    //     this.setCookie("userId",user, 365);
+                    // }
+                }
+            },
+  warn(){
+    var user = this.getCookie("userId");
+    if (user != "") {
+                    this.$router.push({path:'/shopCart'});
+                } 
+                else {
+                  
+                  alert('请先登录');
+                   
+                }
+
+  }
+  },
+
+
   
   mounted:function(){
   	this.checkLogin();
+    this.checkCartList();
   },
 }
 </script>

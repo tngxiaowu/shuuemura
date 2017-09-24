@@ -10,6 +10,7 @@ import OrderHistory from './../views/myaccount/OrderHistory.vue'
 import Subscription from './../views/myaccount/Subscription.vue'
 import ShopCart from './../views/shopCart/shopCart.vue'
 import Address from './../views/address/address.vue'
+import GoodList from './../components/goodslist.vue'
 
 Vue.use(Router)
 
@@ -27,6 +28,11 @@ export default new Router({
           path:'/welcome',
           component: Welcome
     },
+    {
+          path:'/goodList/:type',
+          component:GoodList
+    },
+
     {
           path:'/shopCart',
           component:ShopCart

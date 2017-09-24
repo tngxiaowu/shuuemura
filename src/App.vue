@@ -16,16 +16,21 @@
       </div>
       <div slot='content' class="content">
         <div class="tabOption">
-          <span @click='showInput=true'>新用户注册</span>
-          <span @click='showInput=false'>老用户登录</span>
+          <span :class='{"selected": showInput == true}'  @click='showInput=true' >新用户注册</span><span 
+          :class='{"selected": showInput != true}' 
+          @click='showInput=false'>老用户登录</span>
         </div>
-        <div class="content-left">
+        <div class="wrap clearfix">
+          <div class="content-left">
           <log-form @log-success='closeLogForm()' v-if='showInput'></log-form>  
           <register @reg-success='closeLogForm()' v-else></register>
         </div>
         <div class="content-right">
          <img src="./../static/img/base/whychoose.jpg" height="232" width="280">
         </div>
+          
+        </div>
+        
         
       </div>
    </madol-box>
@@ -72,6 +77,8 @@ export default {
     },
     closeLogForm(){
       this.showMadolBox = false;
+      
+
     },
     select(item){
 
@@ -82,6 +89,18 @@ export default {
 </script>
 
 <style scoped>
+  .clearfix:after {
+      content:".";
+      display:block;
+      height:0;
+      visibility:hidden;
+      clear:both;
+    }
+
+    .clearfix {
+      *zoom:1;
+    }
+
   h1{
     margin: 0px;
     padding-top: 55px;
@@ -95,10 +114,15 @@ export default {
 
   .content{
     margin-top: 45px;
+    padding-left: 15px;
+  }
+
+  .wrap{
+
   }
 
   .tabOption{
-    padding-left: 25px;
+    
   }
 
   .tabOption span{
@@ -106,13 +130,33 @@ export default {
     display: inline-block;
     height: 36px;
     width: 135px;
+    
+   line-height: 36px;
+   font-size: 14px;
+   text-align: center;
+   border: 1px solid black;
+  }
+  .selected{
+    background-color: black;
+    color: white;
+
   }
 
 
 
   .content-left{
     float: left;
-    width: 605px;
+    width: 585px;
+    border: 1px solid black;
+
+
+  }
+
+  .login-box{
+    padding-top: 20px;
+    
+    height: 300px;
+    margin-right: 0px;
   }
 
   .content-right{

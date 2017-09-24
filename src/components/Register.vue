@@ -9,12 +9,12 @@
     </div>
   	<div>
       <span class="password">密码：</span>
-      <input type="text" name="" placeholder="您的密码" v-model='registePassword1' @blur="checkPassword1()"> 
+      <input type="password"  checked name="" placeholder="您的密码" v-model='registePassword1' @blur="checkPassword1()"> 
       <em v-if='passwordError1'>密码为6-10位</em> 
     </div>
     <div>
       <span class="password">确认密码：</span>
-      <input type="text" name="" placeholder="您的密码" v-model='registePassword2' @blur="checkPassword2()"> 
+      <input type="password" checked placeholder="您的密码" v-model='registePassword2' @blur="checkPassword2()"> 
       <em v-if='passwordError2'>密码为6-10位</em> 
        <em v-if='passwordSameError'>两次密码不一致</em> 
     </div>
@@ -22,8 +22,8 @@
       <input type="checkbox" name="" @cheked='keppLogin' class="keeplogin small-font-size">
       <span class="small-font-size rember-login-name">我愿意订阅植村秀电子报，及时接收植村秀最新资讯和促销信息。</span> <br>
       <input type="checkbox" name="" @cheked='keppLogin' class="keeplogin small-font-size">
-      <span class="small-font-size rember-login-name">我已阅读和了解植村秀官网的使用条款和隐私声明，并且同意接受使用条款。</span> <br>
-      <p class="small-font-size">您填写本页面信息，将被视为您同意植村秀（中国）品牌为向您提供更完善的服务和推介，将您的个人信息提供给品牌经销商或联盟企业。</p>
+      <span class="small-font-size rember-login-name">我已阅读和了解使用条款和隐私声明，并且同意接受使用条款。</span> <br>
+      <p class="small-font-size">您填写本页面信息，将被视为您同意植村秀（中国）品牌为向您提供更完善<br>的服务和推介，将您的个人信息提供给品牌经销商或联盟企业。</p>
     </div>
   	<div>
        <!--  如果存在密码不符合的情况，禁止注册 -->
@@ -66,6 +66,9 @@ export default {
   computed:{
     nickName(){
       return this.$store.state.nickName;  
+    },
+    result(){
+      return ((!this.registerEmail.length||!this.registePassword1.length||!this.registePassword2.length)||this.emailExistTip||this.emailFormatError||this.passwordError1||this.passwordError2||this.passwordSameError)
     }
     
   },
@@ -165,6 +168,7 @@ export default {
 
     //注册
     register(){
+        if(!this.result){
         //当发送Post请求时，将用户名/密码/cookie设置的长度传给后台
         axios.post('/users/register',{registerEmail: this.registerEmail,registePassword: this.registePassword1}).then((response)=>{
           var res = response.data;
@@ -177,16 +181,22 @@ export default {
             this.login();
             //跳转到欢迎注册页
             this.$router.push({path:'/welcome',query:{'status':1,'email':this.registerEmail}})
-          }else{
-           
           }
         })
       }
+      },
+
+      //input框默认被选中
+      inputSelected(){
+        document.getElementsByClassName("keeplogin")[0].checked = true;
+        document.getElementsByClassName("keeplogin")[1].checked = true;
+      }
+
   },
 
 
-  mounted:function(){
-
+  mounted(){
+    this.inputSelected();
   }
   
 }
@@ -232,6 +242,10 @@ export default {
     padding-bottom: 10px;
   }
 
+  .login-box>div>p{
+    padding-left: 130px;
+  }
+
 
 
   .login-box>div>span{
@@ -243,6 +257,7 @@ export default {
 
   .login-box>div>.rember-login-name{
       width: auto;
+      margin-bottom: 10px;
   }
   .login-box>div>.forget-password{
       width: auto;

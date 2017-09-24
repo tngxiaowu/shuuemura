@@ -46,7 +46,11 @@ export default {
   computed:{
     nickName(){
       return this.$store.state.nickName;  
+    },
+    result(){
+      return (!this.email.length||!this.password.length)||(this.emalErrorText||this.passwordError)
     }
+
   },
   methods:{
   	keppLogin(){
@@ -77,25 +81,49 @@ export default {
 
     //登录
     login(){
+        if(!this.result){
         //当发送Post请求时，将用户名/密码/cookie设置的长度传给后台
         axios.post('/users/login',{userEmail: this.email,userPassword: this.password,maxAge: this.maxAge}).then((response)=>{
           var res = response.data;
           if(res.status == '0'){
             this.errorPassword = false;
             this.$store.commit('updateUserInfo',res.result)
+            this.mergeCartList();
             console.log(res.msg);
             this.$emit('log-success');
+            this.$router.push({path:this.$route.fullPath})
           }else{
             this.errorPassword = true;
             console.log(res.msg);
           }
         })
+        }
+      },
+
+      inputSelected(){
+        document.getElementsByClassName("keeplogin")[0].checked = true;
+      },
+
+    //合并购物车
+  mergeCartList(){
+    axios.post('/users/mergeCartList').then((response)=>{
+      var res = response.data;
+      if(res.status == '0'){
+        console.log('合并成功')
+        this.$store.commit('updateCartCount',res.result);
       }
+    })
+  }
   },
 
 
-  mounted:function(){
+  
 
+
+
+
+  mounted(){
+    this.inputSelected();
   }
   
 }
@@ -133,6 +161,7 @@ export default {
 
 	.login-box{
 		width: 500px;
+    padding-left: 20px;
 	}
 
   .login-box>div{

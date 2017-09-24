@@ -210,18 +210,19 @@
 
  	
    <!-- 打分组件 -->
-   <madol-box v-if="showCommentBox" @close-modal-box='closeModalBox'>
+   <madol-box  @close-modal-box='closeModalBox' v-if='showCommentBox'  >
   
      <div slot='content' class="main-content">
       <!-- <div>
         
       </div> -->
-      <div class="wrap">
-     	<div class="comment-left" >
+      <div class="wrap clearfix">
+     	<div class="comment-left clearfix" >
+        <img src='./../../static/img/itemdetail/poplogo_shuuemura.gif' height="28" width="102">
      		<h3> {{ model.ModelChName }} </h3>
      		<img :src='"static/img/goods/"+relatedItem[0].itemImg'>
      	</div>
-     	<div class="comment-right">
+     	<div class="comment-right clearfix" v-if='!showThanks'>
 				 <div>
 					 <h3>发表评论</h3>	
 				 </div>
@@ -229,7 +230,6 @@
      			 <div class="star-left">
      				 <span>*总体评价</span>
      			 </div>
-					
   				 <div class="star-right">
   						<star @addStar='starComment' :isRated='isRated' ></star>	
   				 </div>
@@ -251,24 +251,45 @@
     				<div class="star-left">
     					<span>上传图片：</span>
     				</div>
-    					<input type="file" name="" @change='getFile($event,1)' >
-    					<span @click='deleteImg(1)'> x </span>
-    					<input type="file" name="" @change='getFile($event,2)'>
-    					<span @click='deleteImg(2)'> x </span>
-    					<input type="file" name="" @change='getFile($event,3)'>
-    					<span @click='deleteImg(3)'> x </span>
-    					<img :src="dataUrl1" class="privew-img privew-img-1" v-if='dataUrl1'>
-    					<img :src="dataUrl2" class="privew-img privew-img-2" v-if='dataUrl2'>
-    					<img :src="dataUrl3" class="privew-img privew-img-3" v-if='dataUrl3'>
+            <ul class="clearifx">
+              <li>
+                <span @click='deleteImg(1)'> x </span>
+                <img :src="dataUrl1" class="privew-img privew-img-1" v-if='dataUrl1'>
+                <div>
+                   <input type="file" name="" @change='getFile($event,1)' >   
+                </div>
+               
+
+              </li>
+              <li>
+                  <span @click='deleteImg(2)'> x </span>
+                  <img :src="dataUrl2" class="privew-img privew-img-2" v-if='dataUrl2'>
+                  <input type="file" name="" @change='getFile($event,2)'>
+              </li>
+
+              <li>
+                <span @click='deleteImg(3)'> x </span>
+                <img :src="dataUrl3" class="privew-img privew-img-3" v-if='dataUrl3'>
+                <input type="file" name="" @change='getFile($event,3)'>
+              </li>
+            </ul>	
+           
     			</div>
     			<div class="submit" >
-    				<button @click='submit()'>提交</button>
+    				<button @click='submit()' class="submit-btn">提交</button>
     			</div>
 
-     		<div v-if='showThanks'>
-     			感谢您的评论
-     		</div>
+     		
       </div>
+      <div v-else class="showThanks">
+          <h2>感谢您的评论</h2>
+          <p>您已成功提交了商品评论。</p>
+          <p>我们将会第一时间审核并发布您的评论。</p>
+          <p>感谢您对植村秀的支持与厚爱！</p>
+          <div class="backtocom" @click='backtocom()'>
+            <a>返回至评论</a>
+          </div>
+        </div>
      	</div>
      	</div>
      
@@ -343,9 +364,9 @@ export default {
   			})
   			return Math.floor((rateScore)/this.model.ModelComment.length)
   		},
-  		cartCount(){
-      		return this.$store.state.cartCount;  
-    	}
+  		// cartCount(){
+    //   		return this.$store.state.cartCount;  
+    // 	}
   },
   methods:{
   	//打开评论
@@ -394,7 +415,7 @@ export default {
   				this.sendItemCookie();
   				console.log(this.historyItem);
   				this.selectStandard = res.result.item[0].itemStandard;
-          this.$store.commit('updateCartCount',res.cartCount)
+          // this.$store.commit('updateCartCount',res.cartCount)
   			}
   		})
   	},
@@ -544,7 +565,12 @@ export default {
   		if(!this.rate){
   			this.isRated = true;
   		}else{
-  			this.addComment();
+        if(this.getCookie("userId")){
+          this.addComment();  
+        }else{
+          alert('请先登录')
+        }
+  			
   		}
 
   	},
@@ -648,12 +674,40 @@ export default {
   	}	
   },
 
+  backtocom(){
+    window.location.reload();
+  },
+
+  warn(){
+    console.log('router是',this.$route);
+  },
+  //获取cookie
+   getCookie: function (cname) {
+                var name = cname + "=";
+                var ca = document.cookie.split(';');
+                for (var i = 0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') c = c.substring(1);
+                    if (c.indexOf(name) != -1) return c.substring(name.length, c.length);
+                }
+                return "";
+            },
+  //清除cookie
+  clearCookie: function () {
+                this.setCookie("userId", "1", -1);
+
+            },
+
+  //检查cookie
+  
+
 
 	},
 	//钩子函数
   	mounted:function(){
   		this.getModelDetail();
   		this.getHistoryMode();
+      this.test();
   	},
 }
 
@@ -671,6 +725,7 @@ export default {
   .wrap{
     width: 880px;
     padding: 40px 40px 10px;
+    padding-top: 30px;
   }
 
 	.comment-left{
@@ -696,10 +751,6 @@ export default {
     padding-bottom: 8px;
     border-bottom: 2px solid #e5e5e5;
     margin-bottom: 22px;
-  }
-
-  .star-area>div{
-    margin-left: 20px;
   }
 
 	textarea{
@@ -986,7 +1037,7 @@ export default {
 		margin-right: 5px;
 	}
 
-	.addPic>input{
+	.addPic input{
 		width: 98px;
 		height: 98px;
 		display: inline-block;
@@ -994,13 +1045,41 @@ export default {
 		border: 1px solid #ccc;
 		cursor: pointer;
 		opacity: 0;
+    padding: 0px;
+    margin: 0px;
 	}
 
+  .addPic ul li span{
+    float: right;
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    z-index: 10;
+  }
 
+  .addPic img{
+    z-index: 9;
+  }
+
+  .addPic ul{
+    height: 110px;
+  }
+
+  .addPic ul li{
+    position: relative;
+    float: left;
+    background: url('./../../static/img/itemdetail/commentImg-temp-shu.jpg') no-repeat;
+    background-size: 100%;
+    width: 98px;
+    height: 98px;
+    margin-right: 11px;
+
+  }
 
 	.privew-img{
 		width: 98px;
 		height: 98px;
+    top: 0px;
 	}
 
 	.star-area{
@@ -1016,7 +1095,8 @@ export default {
 	}
 
   .star-left>span{
-    /*margin-left: 20px;*/
+    margin-left: 20px;
+    display: inline-block;
   }
 
   .star-left-area{
@@ -1040,17 +1120,26 @@ export default {
 	}
 
 	.addPic .privew-img-1{
-		left: 325px;
+		top:0px;
 	}
 
 	.addPic .privew-img-2{
-		left: 445px;
+		top:0px;
 
 	}
 
 	.addPic .privew-img-3{
-		left: 562px;
+		top:0px;
 	}
+
+  .submit-btn{
+    border: none;
+    color: white;
+    width: 60px;
+    height: 22px;
+    float: right;
+
+  }
 
 	.star-bar>span{
 		color: gold;
@@ -1124,6 +1213,40 @@ export default {
 
   .over-length-warn{
     color: red;
+  }
+
+  .showThanks{
+    width: 560px;
+    height: 236px;
+    float: left;
+    text-align: center;
+    border-top: 1px solid #cccccc;
+    margin: 60px 0px 15px 0px;
+    padding-top: 30px;
+    padding-left: 0px;
+    font-size: 30px;
+    
+  }
+
+  .showThanks>h2{
+    border-bottom: none !important;
+  }
+  
+  .showThanks p{
+    text-align: center;
+    font-size: 14px;
+    color: #555555;
+    margin-bottom: 5px;
+  }
+
+  .backtocom{
+    margin-top: 20px;
+    font-size: 14px;
+    
+  }
+
+  .backtocom a{
+    color: #1d548c;
   }
 
 	

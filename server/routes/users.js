@@ -11,6 +11,8 @@ var Goods = require("./../models/goods.js")
 //获取时间模块
 var sd = require("silly-datetime");
 
+var Temp = require("../models/temp-cart-list.js")
+
 
 //登录接口
 router.post('/login', (req, res, next)=>{
@@ -50,12 +52,20 @@ router.post('/login', (req, res, next)=>{
 					path:'/',
 					maxAge: maxAge
 					})
+
+					var cartCount = 0;
+					doc.cartList.forEach((item)=>{
+						cartCount += item.itemNumber;
+					})
+
 	  				
 
 	  				res.json({
 		  				status:'0',
 		  				msg: '请求成功',
-		  				result:doc.userName
+		  				result:doc.userName,
+		  				cartCount:cartCount
+
 	  		 		})		
 	  			}
 	  	//如果密码不匹配，那么就向客户端发送密码错误信息
@@ -147,6 +157,58 @@ router.get('/checkUserEmail',(req,res,next)=>{
 	})
 })
 
+//加载商品数量
+router.get('/checkCartList',(req,res,next)=>{
+	//判断用户是否存在
+	if(req.cookies.userId){
+		User.findOne({'userID':req.cookies.userId},(err,userDoc)=>{
+			if(err){
+				throw err
+			}else{
+				if(userDoc){
+					var cartCount = 0;
+					userDoc.cartList.forEach((item)=>{
+					cartCount += item.itemNumber;
+					
+				})
+					res.json({
+						status:'0',
+						cartCount: cartCount
+					})
+
+				}
+			}
+		})
+
+	}else{
+		if(req.cookies.offLineCart){
+			Temp.findOne({},(err,tempDoc)=>{
+				if(err){
+					throw err
+				}else{
+					if(tempDoc){
+						var cartCount = 0;
+						tempDoc.cartList.forEach((item)=>{
+							cartCount += item.itemNumber;
+						})
+						res.json({
+							status:'0',
+							cartCount:cartCount
+						})
+					}
+				}
+			})
+		}else{
+			var cartCount = 0
+			res.json({
+				status:'0',
+				msg: '离线cookie不存在',
+				cartCount:cartCount
+			})
+		}
+	}
+})
+
 
 //注册接口
 router.post('/register',(req,res,next)=>{
@@ -185,6 +247,118 @@ router.post('/register',(req,res,next)=>{
 	})
 })
 
+//加载离线商品
+router.post('/mergeCartList',(req,res,next)=>{
+	var userID = req.cookies.userId
+	var visitorID = req.cookies.offLineCart
+	if(visitorID){
+		User.findOne({'userID':req.cookies.userId},(err,userDoc)=>{
+			if(err){
+				res.json({
+					status: '3',
+					msg: err.message
+				})
+
+			}else{
+				if(userDoc == null){
+					res.json({
+						status:'0',
+						msg: '找到用户为空'
+					})
+
+				}
+
+				if(userDoc){
+					//寻找离线购物车
+					Temp.findOne({'visitorID': visitorID },(err,tempDoc)=>{
+						if(err){
+							throw err
+						}
+						else{
+							if(tempDoc == null){
+								res.json({
+								status:'0',
+								msg: '找到用户为空'
+								})
+
+							}
+							if(tempDoc){
+								var tempArr1 = tempDoc.cartList;
+								var tempArr2 = userDoc.cartList;
+								var tempArr3 = [];
+								tempArr1.forEach((item1)=>{
+									tempArr2.forEach((item2)=>{
+										if(item1.ModeCode == item2.ModeCode){
+											if(item1.itemStandard == item2.itemStandard){
+												console.log('加东西了吗？')
+												var number = item2.itemNumber
+												item1.itemNumber += number;
+												tempArr2.splice(tempArr2.indexOf(item2),1);
+										}
+									}
+								})
+								 tempArr3.push(item1);
+									
+								})
+
+								console.log('11',tempArr1);
+								console.log('12',tempArr2);
+
+								tempArr2.filter((item)=>{
+									return item !=undefined;
+								})
+
+								var tempArr4 = tempArr1.concat(tempArr2);
+								console.log('4',tempArr4);
+
+
+								var cartCount = 0;
+								tempArr4.forEach((item)=>{
+									cartCount += item.itemNumber;
+								})
+
+								//清除cookie
+								res.cookie('offLineCart','',{
+									path:'/',
+									maxAge: -1
+								})
+
+								User.update({'userID':userID},{$set:{cartList:tempArr4}},function(err,result){
+									if(err){
+										throw err
+									}else{
+										if(result){
+											res.json({
+												status: '0',
+												msg:"合并成功",
+												cartCount:cartCount
+										})
+								}
+
+									}
+								})
+
+
+
+							}//if结束
+
+						}
+					})
+
+				}
+			}
+		})
+
+	}//if技术
+	else{
+		res.json({
+			status:'0',
+			msg: '离线cookie不存在'
+		})
+	}
+})
+
+
 //个人中心-加载订单数据
 router.post('/getOrderData',(req,res,next)=>{
 	//个人中心页面判定userId是否存在？
@@ -201,7 +375,7 @@ router.post('/getOrderData',(req,res,next)=>{
 				if(userDoc){
 					res.json({
 						status:'0',
-						result: userDoc.orderList
+						result: userDoc
 					})
 
 				}
@@ -429,6 +603,35 @@ router.post('/deleteItem',(req,res,next)=>{
 			}
 			})
 		})
+
+//确定用户购物车数量
+router.post('/updateCartList',(req,res,next)=>{
+	var userID = req.cookies.userId;
+	var list = req.body.list;
+	console.log(list);
+	User.findOne({'userID':userID},(err,userDoc)=>{
+		if(err){
+			throw err
+		}else{
+			if(userDoc){
+				User.update({'userID':userID},{$set:{cartList:list}},function(err,result){
+					if(result){
+						console.log(result);
+							res.json({
+								status:0,
+								msg:"success",
+							})
+						}
+					})
+
+			}
+		}
+	})
+
+
+	
+
+})
 
 
 //地址列表加载

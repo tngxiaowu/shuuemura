@@ -59,8 +59,12 @@
 											<td class="detailAddress"> {{ item.detailAddress }} </td>
 											<td> {{ item.postCode }} </td>
 											<td class="telPhone"> {{ item.telPhone }} </td>
-											<td class="edit-btn"> <span @click='editAddress(item.addressId)'>修</span> </td>
-											<td class="delete-btn"> <span @click='openModalBox(index)'>删</span> </td>
+											<td class="edit-btn"> <span @click='editAddress(item.addressId)'>
+												<img src="./../../../static/img/adressList/edit.png" height="10" width="10">
+											</span> </td>
+											<td class="delete-btn"> <span @click='openModalBox(index)'>
+												<img src="./../../../static/img/adressList/delete.png" height="10" width="10">
+											</span> </td>
 										</tr>
 									</tbody>
 								</table>
@@ -214,6 +218,7 @@ import AddressAdd from './addressAdd.vue'
 	  	},
 		data(){
 			return{
+				firstVisit:true,
 				addressList:[],
 				showDeleetBox:false,
 				currentAddress:'',
@@ -282,9 +287,10 @@ import AddressAdd from './addressAdd.vue'
 					if(res.status="0"){
 						console.log(res.msg);
 						this.list = res.result;
-
 						// _this.list=res.msg[0];
 						this.getshopId();
+						
+
 					}
 				})
 			},
@@ -360,7 +366,10 @@ import AddressAdd from './addressAdd.vue'
             		if(res.status == '0'){
             			this.addressList = res.result.adressList;
             			//设置默认状态
-            			
+            			if(this.firstVisit){
+            				this.checkedAddress = this.addressList[0].addressId;
+            			}
+            			this.firstVisit = false;
             		}
             	})
             },
@@ -443,8 +452,9 @@ import AddressAdd from './addressAdd.vue'
 		},
 		mounted(){
 			this.getAddressList();
-			// this.checkedAddress = this.addressList[0].addressId;
-
+			console.log('数据是',this.addressList);
+		},
+		updated(){
 
 		},
 		components:{
@@ -486,6 +496,10 @@ import AddressAdd from './addressAdd.vue'
 		font-size: 14px;
 		text-align: center;
 		
+	}
+
+	td>span{
+		cursor: pointer;
 	}
 
 	.clearfix:after {
