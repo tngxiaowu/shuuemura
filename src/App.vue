@@ -16,9 +16,9 @@
       </div>
       <div slot='content' class="content">
         <div class="tabOption">
-          <span :class='{"selected": showInput == true}'  @click='showInput=true' >新用户注册</span><span 
+          <span :class='{"selected": showInput == true}'  @click='showInput=true' >老用户登录</span><span 
           :class='{"selected": showInput != true}' 
-          @click='showInput=false'>老用户登录</span>
+          @click='showInput=false'>新用户注册</span>
         </div>
         <div class="wrap clearfix">
           <div class="content-left">

@@ -39,6 +39,9 @@ module.exports = {
         },
         "/tempcartlist":{
             target:"http://localhost:3000"
+        },
+        "/family":{
+            target:"http://localhost:3000"
         }
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"

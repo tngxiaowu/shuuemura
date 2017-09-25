@@ -29,7 +29,7 @@ export default new Router({
           component: Welcome
     },
     {
-          path:'/goodList/:type',
+          path:'/goodList',
           component:GoodList
     },
 

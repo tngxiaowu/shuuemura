@@ -42,9 +42,10 @@ mongoose.connection.on("disconnected",()=>{
 
 //默认就是从/goods开始
 router.get("/",function(req,res,next){
-	var modeCode = parseInt(req.query.ModeCode);
-	console.log(modeCode);
-	Goods.find({'ModeCode': modeCode},(err,doc)=>{
+	// var modeCode = parseInt(req.query.ModeCode);
+	// console.log(modeCode);
+	var p=req.query;
+	Goods.find(p,(err,doc)=>{
 		if(err){
 			res.json({
 				status:"1",

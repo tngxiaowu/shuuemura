@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 var admins = require('./routes/admins');
+var family = require('./routes/family.js')
 //引入user.js
 
 //引入Good.js
@@ -40,6 +41,7 @@ app.use('/users',users);
 
 app.use('/goods',goods);
 app.use('/admins',admins);
+app.use('/family',family);
 
 app.use('/tempcartlist',tempcartlist);
 

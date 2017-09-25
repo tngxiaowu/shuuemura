@@ -1,230 +1,202 @@
 <template>
-  <div class="goodslist">
-    <nav class="crumbs">
-      <a href=""></a>
-      <a href="">彩妆 /</a>
-      <a href="" class="current">隔离系列</a>
-    </nav>
-    <div class="content-padded">
-      <ul class="grid-view">
-        <!-- <li class="grid-view-item">
-          <router-link to='/infos/' class="item-image">
-            <img src="http://m.clarisonic.cn/uploadfile//20150901/5457142288615876.png" alt="毛孔柔焦CC泡隔" class="image">
-          </router-link>
-          <ol class="item-info">
-            <li class="name">毛孔柔焦CC泡隔</li>
-            <li class="price">￥390/50g</li>
-            <li class="opt">
-              <router-link to='/infos' class="btn-buy">立即购买</router-link>
-            </li>
-          </ol>
-        </li> -->
-        <li v-for="item in detailsList" class="grid-view-item">
-          <router-link :to='`/infos/${item.ModeCode}`' class="item-image">
-            <img :src="`../../static/images/${item.imgUrl}`" class="image">
-          </router-link>
-          <ol class="item-info">
-            <li class="name">{{item.productName}}</li>
-            <li class="price">{{item.productPrice}}</li>
-            <li class="opt"><router-link to='/infos' class="btn-buy">立即购买</router-link></li>
-          </ol>
-        </li>
-      </ul>
-    </div>
+  <div id="details">
+   	<div class="details-name" >
+	   	<div v-for="(item,index1) in list">
+	   		<h6>{{item.type}}</h6>
+	   		<ul class="first">
+	   			<li  v-for="(type,index2) in item.typeo"  @click="change(index1,index2)"><router-link :to="{path:'/goodList',params:{familyCode:item.router}}">{{type.name}}</router-link>
+					<ul v-show="type.num">
+						<li  v-for="itmes in type.main"><router-link to="/">{{itmes.name}}</router-link></li>
+					</ul>
+	   			</li>
+	   		</ul>
+	   	</div>
+   	</div>
+
+
+   	<div class="details-img">
+   		<div class="image">
+   			<img src="../../static/images/xiangqing.jpg" alt="">
+   		</div>
+   		<div class="list">
+   			<ul>
+   				<li class="list-item"  v-for="item in productList" :style="{color:color[0]}">
+   					<div class="new" v-show="item.new"><img src="../../static/images/ICN_New_BG.png" height="46" width="62" alt=""></div>
+   					<div class="list-left">
+   						<img :src="`../../static/images/${item.ModelCoverImg}`" alt="">
+   					</div>
+   					<div class="list-right" >
+   						<p>{{item.ModelChName}}</p>
+   						<p class="price">￥{{item.ModelOriginPrice}}</p>
+   						<!-- <div>{{item.ModeRate}}</div> -->
+						<router-link to="/"><img src="../../static/images/BTN_VwDtls.gif" alt=""></router-link>
+						<router-link to="/"><img src="../../static/images/BTN_QckShp.png" alt=""></router-link>
+   					</div>
+   				</li>
+   			</ul>
+   		</div>
+   	</div>
   </div>
 </template>
 
 <script>
 import axios from "axios"
 export default {
-  name: 'goodslist',
-  data () {
-    return {
-      detailsList:[
-      //   {
-      //     imgUrl:"http://m.clarisonic.cn/uploadfile//20160425/7167454776216777.png",
-      //     productName:"超模心机修颜乳 SPF30 PA++",
-      //     productPrice:"￥360/30ml",
-      //     productBuy:"立即购买"
-      //   },
-      //   {
-      //     imgUrl:"http://m.clarisonic.cn/uploadfile//20140915/201406251134070_main_B.png",
-      //     productName:"超模心机焕颜霜",
-      //     productPrice:"￥450/50ML",
-      //     productBuy:"立即购买"
-      //   },
-      //   {
-      //     imgUrl:"http://m.clarisonic.cn/uploadfile//20141016/164484730927977.png",
-      //     productName:"新超模心机柔焦底霜",
-      //     productPrice:"￥320/22ML",
-      //     productBuy:"立即购买"
-      //   },
-      //   {
-      //     imgUrl:"http://m.clarisonic.cn/uploadfile//20160425/7167675593961926.png",
-      //     productName:"超模心机水感润泽霜",
-      //     productPrice:"￥360/自然02",
-      //     productBuy:"立即购买"
-      //   },
-      //   {
-      //     imgUrl:"http://m.clarisonic.cn/uploadfile//20170713/4261339962482952.png",
-      //     productName:"轻薄微光妆套组",
-      //     productPrice:"￥610/套组",
-      //     productBuy:"立即购买"
-      //   },
-      //   {
-      //     imgUrl:"http://m.clarisonic.cn/uploadfile//20170713/4260986975656822.png",
-      //     productName:"明星泡隔底妆收藏组",
-      //     productPrice:"￥435/套组",
-      //     productBuy:"立即购买"
-      //   },
-      //   {
-      //     imgUrl:"http://m.clarisonic.cn/uploadfile//20140915/201401221454270_main_B.jpg",
-      //     productName:"五角形海绵 4PCS",
-      //     productPrice:"￥45/4PCS",
-      //     productBuy:"立即购买"
-      //   }
-       ]
-    }
+  name: 'app',
+  data(){
+  	return {
+  		list:null,
+  		productList:null,
+  		color:["#000"]
+  	}
   },
-  created(){
-    console.log(this.$route.params.type);
-    this.getdata(this.$route.params.type);
+  methods:{ 
+  	change(index1,index2){
+  		// this.list.forEach(function(item,index){
+  		// 		// console.log(item);
+
+  		// 	item.typeo.forEach(function(items,indexs){
+  		// 		// console.log(items);
+  		// 	})
+  		// })
+  		this.list[index1].typeo[index2].num=!this.list[index1].typeo[index2].num;
+  		var parameter=this.list[index1].router;
+  		this.getgoods(parameter);
+  	},
+  	getList(){
+  		axios.get("/family").then((response)=>{
+  			var res =  response.data;
+  			if(res.status == "0"){
+  				this.list=res.result[0].list;
+  			}
+  		});
+  	},
+  	getgoods(parameter){
+  		axios.get(`/goods?subDepartmentCode=${parameter}`).then((response)=>{
+  			var res=response.data;
+  			if(res.status=="0"){
+  				this.productList=res.msg;
+  			}
+  		});
+  	}
   },
-  methods:{
-    getdata(types){
-      var _this=this;
-      axios.get("/goods/goodsList",{params:{subDepartmentCode:types}}).then((response)=>{
-       var res=response.data;
-          if(res.status=="0"){
-            console.log(res.result);
-            // console.log(res.msg);
-            res.result.forEach((item)=>{
-              var items={};
-              items.imgUrl=item.ModelCoverImg;
-              items.productName=item.ModelChName;
-              items.productPrice=item.ModelOriginPrice;
-              items.ModeCode=item.ModeCode;
-              _this.detailsList.push(items);
-            })
-          }
-      })
-    }
+  created:function(){
+  	this.getgoods("face");
+  	this.getList();
+  	console.log(Boolean(-1));
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.goodslist {
-  max-width: 640px;
-  margin: 0 auto;
-  background-color: #fff;
-}
-.crumbs {
-  padding: 0.4rem 0.6rem 0 2.5rem;
-  position: relative;
-  height: 1.75rem;
-  text-align: left;
-  background-color: #666;
-  overflow: hidden;
-}
-.crumbs a:first-child {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 2.2rem;
-  height: 100%;
-  display: block;
-  font-size: 13px;
-  line-height: 1.75rem;
-  background-color: #333;
-}
-.crumbs a {
-  text-decoration: none;
-  color: #919191;
-  margin-right: 0.6rem;
-}
-.crumbs a:first-child:before {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  margin-top: -0.3rem;
-  margin-left: -0.2rem;
-  content: "\20";
-  width: 0.6rem;
-  height: 0.6rem;
-  display: inline-block;
-  vertical-align: 1px;
-  border-top: 1px #fff solid;
-  border-left: 1px #fff solid;
-  transform: rotate(-45deg);
-}
-.crumbs a.current {
-  color: #fff;
-}
-.content-padded {
-  margin: 0.6rem 0.56rem 0.6rem 0.56rem;
-}
-.content-padded .grid-view {
-  margin-left: 0!important;
-  margin-right: 0!important;
-  margin: 0.6rem 0.6rem 0 0.6rem;
-  padding: 0.3rem 0;
-  display: flex;
-  width: 100%;
-  flex-wrap: wrap;
-}
-.grid-view-item {
-  list-style: none;
-  padding: 0 0.3rem 1.25rem 0.3rem;
-  width: 46%;
-  text-align: center;
-  margin-bottom: 0.6rem; 
-}
-.grid-view-item .image {
-  margin: 0 auto;
-  max-width: 9.4rem;
-  height: 9rem;
-  display: block;
-}
-.grid-view-item .item-info>li.name {
-  font-size: 13px;
-  overflow: hidden;
-  height: 2.1rem;
-  line-height: 1rem;
-  text-align: center;
-  color: #646464;
-}
-.grid-view-item .item-info>li.price {
-  /*padding-right: 2.5rem;*/
-  color: #393939;
-  font-size: 15px;
-}
-.grid-view-item .item-info>li {
-  padding: 0.2rem 0;
-  list-style: none;
-}
-/*.grid-view-item .item-info>li.opt {
-  padding-right: 1.9rem;
-}*/
-a.btn-buy {
-  text-decoration: none;
-  color: #fff;
-  background-color: #cf3537;
-  position: relative;
-  display: inline-block;
-  padding: 0.4rem 0.9rem 0.4rem 0.87rem;
-  margin: 0 auto;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 1;
-  text-align: center;
-  vertical-align: top;
-  background-clip: padding-box;
-  border: 1px #cf3537 solid;
-}
+	*{
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+	}
+	#details{
+		width: 951px;
+		margin: 0 auto;
+		height: auto;
+	}
+	#details:after{
+		display: block;
+		clear: both;
+	}
+	.details-name{
+		width: 190px;
+		float: left;
+		/*border-right: 1px solid #000;*/
+		height: 100%;
+	}
+	.details-img{
+		width: 760.8px;
+		float: right;
+	}
+	h6{
+		font-size: 14px;
+		margin: 10px 0px;
+	}
+	ul{
+		list-style: none;
+	}
 
-ol{
-  padding-left: 0px; 
-}
+	.first>li{
+		font-weight: lighter;
+
+	}
+	.first>li>a:hover{
+		background-color: #ccc;
+	}
+	a{
+		text-decoration:none;
+		font-size: 8px;
+		color: #000;
+		padding: 0 10px;
+		display: block;
+		padding-left: 20px;
+	}
+	li ul li a{
+		color: #ccc;
+		margin-left: 20px;
+	}
+	li ul li a:hover{
+		color: #000;
+	}
+	/*.list{
+		display: flex;
+	}*/
+	.list:after{
+		display: block;
+		content: " ";
+		clear: both;
+	}
+	.list ul{
+		width: 100%;
+		/*display: flex;*/
+	}
+	.list li{
+		width: 248px;
+		padding:20px 0px;
+		float: left;
+		border: 1px solid #000;
+		margin: 2px;
+		height: 200px;
+	}
+	.list a{
+		padding: 0;
+	}
+	.list-right{
+		width: 50%;
+		float: right;
+		padding-left: 10px;
+	}
+	.list-right p{
+		margin:10px 0px;
+		font-size: 12px;
+	}
+	.price{
+		font-size: 14px !important;
+		font-weight: bolder;
+	}
+	.list-left{
+		width: 50%;
+		float: left;
+		padding-left: 20px;
+	}
+	.image{
+		height: 337px;
+		border-bottom: 1px solid #000;
+		border-left: 1px solid #000;
+		background:url("../../static/images/xiangqing.jpg") no-repeat center;
+	}
+	.list-item{
+		position: relative;
+	}
+	.new{
+		position: absolute;
+		top: -1px;
+		left: -1px;
+	}
+
 </style>
