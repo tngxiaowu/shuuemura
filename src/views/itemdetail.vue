@@ -415,7 +415,7 @@ export default {
   				this.sendItemCookie();
   				console.log(this.historyItem);
   				this.selectStandard = res.result.item[0].itemStandard;
-          // this.$store.commit('updateCartCount',res.cartCount)
+          
   			}
   		})
   	},
