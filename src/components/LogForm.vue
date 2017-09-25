@@ -110,7 +110,7 @@ export default {
       var res = response.data;
       if(res.status == '0'){
         console.log('合并成功')
-        this.$store.commit('updateCartCount',res.result);
+        this.$store.commit('updateCartCount',res.cartCount);
       }
     })
   }

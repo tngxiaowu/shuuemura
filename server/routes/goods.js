@@ -65,42 +65,42 @@ router.get("/",function(req,res,next){
 	})
 });
 
-//商品详情页加载商品信息接口
-// router.get('/itemDetail',(req,res,next)=>{
-// 	// var parma = {'ModeCode': req.query.modelCode}
-// 	var parma = req.query;
-// 	var cartCount = null
-// 	Goods.find(parma,(err,doc)=>{
-// 		if(err){
-// 			throw err
-// 		}else{
-// 			if(doc){
-// 				User.findOne({'userID':req.cookies.userId},(err,userDoc)=>{
-// 					if(err){
-// 						throw err
-// 					}else{
-// 						if(userDoc){
-// 							console.log('userDoc是',userDoc);
-// 							userDoc.cartList.forEach((item)=>{
-// 								cartCount += item.itemNumber;
-// 							})
+//商品详情页加载商品信息接口(手机端)
+router.get('/itemDetails',(req,res,next)=>{
+	// var parma = {'ModeCode': req.query.modelCode}
+	var parma = req.query;
+	var cartCount = null
+	Goods.find(parma,(err,doc)=>{
+		if(err){
+			throw err
+		}else{
+			if(doc){
+				User.findOne({'userID':req.cookies.userId},(err,userDoc)=>{
+					if(err){
+						throw err
+					}else{
+						if(userDoc){
+							console.log('userDoc是',userDoc);
+							userDoc.cartList.forEach((item)=>{
+								cartCount += item.itemNumber;
+							})
 
-// 						}
+						}
 
-// 						res.json({
-// 							status: '0',
-// 							result: doc,
-// 							cartCount:cartCount
-// 						})
-// 					}
-// 				})
+						res.json({
+							status: '0',
+							result: doc,
+							cartCount:cartCount
+						})
+					}
+				})
 				
-// 			}
-// 		}
-// 	})
+			}
+		}
+	})
 // })
 
-//商品详情页加载商品信息接口(备用)
+//商品详情页加载商品信息接口(PC端)
 router.get('/itemDetail',(req,res,next)=>{
 	console.log(req.query.modelCode);
 	var parma = {'ModeCode': req.query.modelCode}
@@ -110,16 +110,16 @@ router.get('/itemDetail',(req,res,next)=>{
 			throw err
 		}else{
 			if(doc){
-				// User.findOne({'userID':req.cookies.userId},(err,userDoc)=>{
-				// 	if(err){
-				// 		throw err
-				// 	}else{
-				// 		if(userDoc){
-				// 			console.log('userDoc是',userDoc);
+				User.findOne({'userID':req.cookies.userId},(err,userDoc)=>{
+					if(err){
+						throw err
+					}else{
+						if(userDoc){
+							console.log('userDoc是',userDoc);
 							
-				// 		}	
-				// 	}
-				// })	
+						}	
+					}
+				})	
 				res.json({
 							status: '0',
 							result: doc,
@@ -263,10 +263,7 @@ router.post('/uploadImg',(req,res,next)=>{
   				})    	
         		
         		})
-
-        	}
-
-        	
+        	  }
         	}
 		})
 	})
@@ -293,8 +290,6 @@ router.post('/uploadImg',(req,res,next)=>{
 				}
 			});
 		}
-
-
 		//第一次设置cookie
 		if(firstFlag ){
 			itemCookieString = itemCookie.join('-');
@@ -396,6 +391,7 @@ router.post('/addCart',(req,res,next)=>{
 		let modeFlag = false;
 		let itemFlag = false;
 		let newItem = null;
+		let overAmount = false;
 		User.findOne({'userID':userId},(err,userDoc)=>{
 			if(err){
 				throw err;
@@ -411,6 +407,9 @@ router.post('/addCart',(req,res,next)=>{
 							console.log('第三步:规格也在购物车内')
 							itemFlag = true;
 							item.itemNumber += parseInt(itemNumber);	
+							if(item.itemNumber > 5){
+								overAmount = true;
+							}
 							}	
 						}
 						tempArr.push(item)
@@ -418,7 +417,8 @@ router.post('/addCart',(req,res,next)=>{
 				//线路1：旧商品 旧款式
 				if(modeFlag&&itemFlag){
 					console.log('线路1:旧商品 旧款式')
-					User.update({userID:userId},{$set:{cartList:tempArr}},function(err,result){
+					if(!overAmount){
+						User.update({userID:userId},{$set:{cartList:tempArr}},function(err,result){
 						if(result){
 							console.log(result);
 							var cartCount = null;
@@ -433,6 +433,13 @@ router.post('/addCart',(req,res,next)=>{
 							})
 						}
 					})
+					}else{
+						res.json({
+							status: 1,
+							msg: '超过最大购买量'
+						})
+					}
+					
 				}
 
 				//线路2：新商品 新款式
@@ -564,6 +571,7 @@ router.post('/addCart',(req,res,next)=>{
 		let modeFlag = false;
 		let itemFlag = false;
 		let newItem = null;
+		let overAmount = false;
 		//寻找该"用户"
 		Temp.findOne({'visitorID': visitorID },(err,tempDoc)=>{
 			if(err){
@@ -584,7 +592,10 @@ router.post('/addCart',(req,res,next)=>{
 							modeFlag = true;
 						if(item.itemStandard == itemStandard){
 							itemFlag = true;
-							item.itemNumber += itemNumber; 
+							item.itemNumber += parseInt(itemNumber);	
+							if(item.itemNumber > 5){
+								overAmount = true;
+							}
 						}
 					}	
 					tempArr.push(item);
@@ -593,22 +604,36 @@ router.post('/addCart',(req,res,next)=>{
 				if(modeFlag&&itemFlag){
 				//旧商品 旧款式
 				console.log('线路1:旧商品 旧款式')
-				Temp.update({'visitorID': visitorID},{$set:{cartList:tempArr}},function(err,result){
-						if(result){
-							console.log(result);
-							var cartCount = null;
-							tempDoc.cartList.forEach((item)=>{
-								cartCount +=  parseInt(item.itemNumber)
-							})
-							res.json({
-								status:0,
-								msg:"success",
-								result:result,
-								cartCount: cartCount
-							})
-						}
-					})
-				}else{
+					if(!overAmount){
+						Temp.update({'visitorID': visitorID},{$set:{cartList:tempArr}},function(err,result){
+							if(result){
+								console.log(result);
+								var cartCount = null;
+								tempDoc.cartList.forEach((item)=>{
+									cartCount +=  parseInt(item.itemNumber)
+								})
+								res.json({
+									status:0,
+									msg:"success",
+									result:result,
+									cartCount: cartCount
+								})
+							}
+						})
+					}
+					else{
+						var cartCount = null;
+						tempDoc.cartList.forEach((item)=>{
+						cartCount +=  parseInt(item.itemNumber)
+						})
+						res.json({
+							status: 3,
+							msg:'超过最大购买量',
+							cartCount:cartCount
+						})
+					}
+				}
+				else{
 					Goods.findOne({'ModeCode':ModeCode},(err,goodsDoc)=>{
 						if(err){
 							throw err
@@ -630,7 +655,6 @@ router.post('/addCart',(req,res,next)=>{
 									newItem.itemNumber = itemNumber;
 									}
 								})
-
 								if(newItem){
 									tempDoc.cartList.push(newItem);
 									tempDoc.save((err,doc)=>{
@@ -660,11 +684,7 @@ router.post('/addCart',(req,res,next)=>{
 							}//goodsDoc结束
 						}	
 					})
-
 				}
-
-
-
 
 				}//离线购物车doc结束
 			}
@@ -709,6 +729,11 @@ router.post('/addCart',(req,res,next)=>{
 						"cartList":[tempCartList]
 						})
 
+						var cartCount = 0;
+						temp.cartList.forEach((item)=>{
+							cartCount += item.itemNumber;
+						})
+
 						temp.save((err,doc)=>{
 							if(err){
 								res.json({
@@ -718,7 +743,8 @@ router.post('/addCart',(req,res,next)=>{
 							}else{
 								res.json({
 									status:'0',
-									msg:'离线购物车创建成功'
+									msg:'离线购物车创建成功',
+									cartCount:cartCount
 								})
 							}
 						})

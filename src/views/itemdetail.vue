@@ -434,7 +434,7 @@ export default {
   					this.$store.commit('updateCartCount',res.cartCount)
   				}
   				else{
-  					console.log(res.msg);
+            alert(res.msg);
   			}
   		})
   	},
@@ -698,16 +698,11 @@ export default {
 
             },
 
-  //检查cookie
-  
-
-
 	},
 	//钩子函数
   	mounted:function(){
   		this.getModelDetail();
   		this.getHistoryMode();
-      this.test();
   	},
 }
 

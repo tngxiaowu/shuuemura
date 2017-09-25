@@ -115,7 +115,7 @@ router.post('/logout',(req,res,next)=>{
 	})
 })
 
-//登录检查邮箱
+//注册检查邮箱
 router.get('/checkUserEmail',(req,res,next)=>{
 	console.log(req.query);
 	var parma = {
@@ -292,7 +292,10 @@ router.post('/mergeCartList',(req,res,next)=>{
 											if(item1.itemStandard == item2.itemStandard){
 												console.log('加东西了吗？')
 												var number = item2.itemNumber
-												item1.itemNumber += number;
+												item1.itemNumber += parseInt(number);
+												if(item1.itemNumber>5){
+													item1.itemNumber = 5
+												}
 												tempArr2.splice(tempArr2.indexOf(item2),1);
 										}
 									}
@@ -495,6 +498,7 @@ router.post('/deleteItem',(req,res,next)=>{
 		var currentIndex = req.body.currentIndex;
 		var isInCartList = false;
 		var notInCartList = false;
+		var overAmount = false;
 		User.findOne({'userID':userID},(err,userDoc)=>{
 		if(err){
 			throw err
@@ -506,9 +510,7 @@ router.post('/deleteItem',(req,res,next)=>{
 						msg:'找不到用户'
 				})
 			}
-			
 			console.log('找到用户了么？')
-			
 			if(userDoc){
 				userDoc.cartList.forEach((item,index)=>{
 					//找到商品
@@ -526,6 +528,10 @@ router.post('/deleteItem',(req,res,next)=>{
 								newItem.itemNumber = parseInt(itemNumber); 
 								userDoc.cartList.splice(currentIndex,1,newItem);
 								console.log('商品自我增减');
+								var cartCount = 0;
+								userDoc.cartList.forEach((item)=>{
+								cartCount += item.itemNumber;
+								})
 								userDoc.save((err,doc)=>{
 									if(err){
 										throw err
@@ -533,7 +539,8 @@ router.post('/deleteItem',(req,res,next)=>{
 										res.json(
 											{
 												status:'0',
-												msg:'保存原版成功'
+												msg:'保存原版成功',
+												cartCount: cartCount
 											})
 										}
 									})
@@ -542,28 +549,46 @@ router.post('/deleteItem',(req,res,next)=>{
 									console.log('合并相同购物车内的产品')
 									var newItem = item;
 									newItem.itemNumber += parseInt(itemNumber); 
+									if(newItem.itemNumber>5){
+										overAmount = true;
+									}
 									console.log("newItem",newItem);
-									var newIndex = userDoc.cartList.indexOf(item);
-									userDoc.cartList.splice(newIndex,1,newItem);
-									userDoc.save((err,doc)=>{
-									if(err){
-										throw err
-									}
-									else{
-										doc.cartList.splice(currentIndex,1);
-										doc.save((err,doc)=>{
-											res.json({
-											status:'0',
-											msg:'保存修改版成功'
+
+									if(!overAmount){
+										var newIndex = userDoc.cartList.indexOf(item);
+										userDoc.cartList.splice(newIndex,1,newItem);
+										var cartCount = 0;
+											userDoc.cartList.forEach((item)=>{
+											cartCount += item.itemNumber;
+											})
+
+										userDoc.save((err,doc)=>{
+										if(err){
+											throw err
+										}
+										else{
+											doc.cartList.splice(currentIndex,1);
+
+											doc.save((err,doc)=>{
+												res.json({
+													status:'0',
+													msg:'保存修改版成功',
+													cartCount: cartCount
+												})
 										})
-										})
 									}
-								})				
+								})
+
+									}else{
+										res.json({
+											status: '3',
+											msg:'超过最大购物限制'
+										})
+								}		
 							}
 						}
 					}
 				})
-
 			//如果不在购物车内
 			if(!isInCartList){
 				console.log('情况3：修改的商品不在购物车内')
@@ -581,7 +606,10 @@ router.post('/deleteItem',(req,res,next)=>{
 								}
 							})
 							userDoc.cartList.splice(currentIndex,1,newStandard);
-							// userDoc.cartList.push();
+							var cartCount = 0;
+							userDoc.cartList.forEach((item)=>{
+								cartCount += item.itemNumber;
+							})
 							userDoc.save((err,doc)=>{
 								if(err){
 									throw err
@@ -590,7 +618,8 @@ router.post('/deleteItem',(req,res,next)=>{
 									if(doc){
 										res.json({
 											status:'0',
-											msg:'第三条路终于成功了'
+											msg:'第三条路终于成功了',
+											cartCount:cartCount
 										})
 									}
 								}
@@ -614,12 +643,17 @@ router.post('/updateCartList',(req,res,next)=>{
 			throw err
 		}else{
 			if(userDoc){
+				var cartCount = 0;
+					list.forEach((item)=>{
+					cartCount += item.itemNumber;
+				})
 				User.update({'userID':userID},{$set:{cartList:list}},function(err,result){
 					if(result){
 						console.log(result);
 							res.json({
 								status:0,
 								msg:"success",
+								cartCount:cartCount
 							})
 						}
 					})
@@ -910,7 +944,6 @@ router.post('/editAddress',(req,res,next)=>{
 })
 
 //生成订单(未支付状态)接口
-
 router.post('/createOrderList',(req,res)=>{
 	//获取用户ID
 	var userID = req.cookies.userId;
@@ -995,8 +1028,6 @@ router.post('/createOrderList',(req,res)=>{
 	})
 
 })
-
-
 
 
 //漏写了这个一直报错

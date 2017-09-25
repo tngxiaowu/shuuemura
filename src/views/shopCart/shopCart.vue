@@ -404,6 +404,9 @@ import modal from "./modal"
 						console.log(res.msg)
 						this.itemone = null;
 						this.getCartList();
+						this.$store.commit('updateCartCount',res.cartCount)
+					}else{
+						alert(res.msg);
 					}
 				})
 			},
@@ -530,6 +533,7 @@ import modal from "./modal"
 					var res = response.data;
 					if(res.status == '0'){
 						console.log('购物车修改成功')
+						this.$store.commit('updateCartCount',res.cartCount)
 						this.$router.push('/address');
 					}
 				})
