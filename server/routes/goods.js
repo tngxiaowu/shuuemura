@@ -427,7 +427,7 @@ router.post('/addCart',(req,res,next)=>{
 							})
 							res.json({
 								status:0,
-								msg:"success",
+								msg:'添加到购物车',
 								result:result,
 								cartCount: cartCount
 							})
@@ -481,7 +481,8 @@ router.post('/addCart',(req,res,next)=>{
 												res.json({
 													status:'0',
 													result: doc,
-													cartCount:cartCount
+													cartCount:cartCounts,
+													msg:'添加到购物车'
 												})
 											}
 										}
@@ -536,7 +537,7 @@ router.post('/addCart',(req,res,next)=>{
 												res.json({
 													status:'0',
 													result: doc,
-													msg:'旧商品，新规格添加成功',
+													msg:'添加到购物车',
 													cartCount:cartCount
 												})
 											}
@@ -614,7 +615,7 @@ router.post('/addCart',(req,res,next)=>{
 								})
 								res.json({
 									status:0,
-									msg:"success",
+									msg:'添加到购物车',
 									result:result,
 									cartCount: cartCount
 								})
@@ -669,6 +670,7 @@ router.post('/addCart',(req,res,next)=>{
 												res.json({
 													status:'0',
 													result: doc,
+													msg:'添加到购物车',
 													cartCount:cartCount
 												})
 											}
@@ -743,7 +745,7 @@ router.post('/addCart',(req,res,next)=>{
 							}else{
 								res.json({
 									status:'0',
-									msg:'离线购物车创建成功',
+									msg:'添加到购物车',
 									cartCount:cartCount
 								})
 							}

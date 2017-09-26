@@ -432,6 +432,7 @@ export default {
   					if(res.status == '0'){
   					console.log(res.msg);
   					this.$store.commit('updateCartCount',res.cartCount)
+            alert(res.msg);
   				}
   				else{
             alert(res.msg);
