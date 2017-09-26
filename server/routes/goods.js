@@ -98,7 +98,7 @@ router.get('/itemDetails',(req,res,next)=>{
 			}
 		}
 	})
-// })
+})
 
 //商品详情页加载商品信息接口(PC端)
 router.get('/itemDetail',(req,res,next)=>{
@@ -756,12 +756,6 @@ router.post('/addCart',(req,res,next)=>{
 		}//离线购物车不存在
 	}
 })
-
-
-
-
-
-
 
 
 
